@@ -1,0 +1,25 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+
+# MySQL Script Code:  Definition within a file
+
+SELECT ROUTINE_TYPE, ROUTINE_NAME
+FROM INFORMATION_SCHEMA.ROUTINES
+WHERE ROUTINE_SCHEMA= @dbname;
+
+
+#How to run from shell>(windows): (shows brackets +---+)
+
+
+#		mysql -u username -p -e "SET @dbname='your_database'; source C:/Filepath/name_of_script.sql;"
+
+#not used, unable to pass in values in this form (does not show brackets)
+#		mysql -u username -p your_database < "C:/Filepath/name_of_script.sql"				      
+
+
+	
+#How to run from mysql>(windows):  (shows brackets +---+)
+
+#		mysql> SET @dbname='your_database'; source C:/Filepath/name_of_script.sql;"
+		

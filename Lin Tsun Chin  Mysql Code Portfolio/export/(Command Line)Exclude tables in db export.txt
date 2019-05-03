@@ -1,0 +1,16 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd
+
+shell> mysqldump -u user -p db_name --ignore-table=db_name.Excluded_tbl(...) --no-create-info > /path/backup_db.sql
+
+# This uses the shell>, or cmd, command line to invoke mysqldump.  
+# It Takes the contents of database db_name and 
+# creates as backup file backup_db with its copied contents
+# while also excluding any table specified by --ignore-table=.
+# --no-create-info : this prevents mysqldump from including DROP TABLE and CREATE TABLE statements in its output 
+# which will wipe your table when importing.
+# (...) is not actual mysql command, but a substitute for multiple ignore tables commands 
+# such as  --ignore-table=db_name.Excluded_tbl, --ignore-table=db_name.Excluded_tbl1, --ignore-table=db_name.Excluded_tbl2,
+# --where="additional clauses" can be inserted within the logic to further specify what needs to be retrieved.

@@ -1,0 +1,26 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+#mysql>:  Creates stored procedure within database, mysql server
+
+DELIMITER //
+
+CREATE	 
+	 DEFINER = CURRENT_USER
+	 PROCEDURE List_Stored_Procedure(IN dbname varchar(30))
+	 COMMENT 'List all stored procedures in current DB'
+	 LANGUAGE SQL
+	 DETERMINISTIC
+	 READS SQL DATA
+ 	 SQL SECURITY INVOKER
+BEGIN
+
+	 SELECT ROUTINE_TYPE, ROUTINE_NAME
+    		FROM INFORMATION_SCHEMA.ROUTINES
+    		WHERE ROUTINE_SCHEMA= dbname;
+END//
+
+
+#How to run:
+
+#mysql> CALL List_Stored_Procedure('dbname');

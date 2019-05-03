@@ -1,0 +1,57 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+
+Union: allows you to combine two or more result sets from multiple tables into a single result set.   
+	
+* UNIONs (UNION and UNION ALL) require that all the queries being UNION'd have:
+  The same number of columns in the SELECT clause
+  The column data type has to match at each position
+
+
+	Example: Select citys from table city, combine them with countries from table country, rename them as "city + country mixed"
+			 use order by desc to have cities start listing from Z and countries start listing from A to show merger.
+	
+				(
+					select city "city + country mixed"
+					from city 
+					order by city desc 
+					limit 10
+				)
+				UNION 
+				(
+					select country "city + country mixed"
+					from country 
+					order by country asc 
+					limit 10
+				)  
+				limit 20;	
+					 
+					Result
+
+						+----------------------+
+						| city + country mixed |
+						+----------------------+
+						| Ziguinchor           |
+						| Zhoushan             |
+						| Zhezqazghan          |
+						| Zeleznogorsk         |
+						| Zaria                |
+						| Zapopan              |
+						| Zaoyang              |
+						| Zanzibar             |
+						| Zalantun             |
+						| Yuzhou               |
+						| Afghanistan          |
+						| Algeria              |
+						| American Samoa       |
+						| Angola               |
+						| Anguilla             |
+						| Argentina            |
+						| Armenia              |
+						| Australia            |
+						| Austria              |
+						| Azerbaijan           |
+						+----------------------+
+						20 rows in set (0.00 sec)

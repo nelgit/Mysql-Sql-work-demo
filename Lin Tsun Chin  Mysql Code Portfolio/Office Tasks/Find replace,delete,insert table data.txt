@@ -1,0 +1,174 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+1)	To Replace: 
+
+			ex: UPDATE table SET value= '001' 
+		     	WHERE value LIKE '999';
+
+			ex: UPDATE table SET value= 'Jimmy' 
+		     	WHERE value LIKE 'Bob';
+
+			ex: UPDATE table SET value= '9999-12-31 23:59:59' 
+		     	WHERE value LIKE '1000-01-01 00:00:00'
+
+	To Replace an entire table row:  Use REPLACE instead, with keyword VALUES, the first value as an ID number:
+
+			mysql> REPLACE INTO test VALUES (1, 'Old', '2014-08-20 18:47:00');
+			
+	Replace Selected Partions only: 
+
+			mysql> UPDATE employees PARTITION (p0)
+			SET store_id = 2 WHERE fname = 'Jill';
+			
+			mysql> REPLACE INTO test PARTITION (p0) VALUES (1, 'Old', '2014-08-20 18:47:00');
+
+	For Mass Replace Tables: (overwrites duplicate entries, also inserts new unique entries if they dont exist)
+
+			#To import a tab seperated file
+			shell> mysqlimport -u user -p --local --replace db_name /path/client_info.txt, /path/inventory.txt, /path/purchase_orders.txt(...)
+
+
+			#To import a comma seperated file
+			shell> mysqlimport -u user -p --fields-terminated-by=, --local --replace db_name /path/client_info.csv, /path/inventory.csv, /path/purchase_orders.csv(...)
+
+
+			#To import a tab seperated file
+			shell> mysql -u root -p -e " USE dbname; LOAD DATA LOCAL INFILE '/path/Import_File' REPLACE INTO TABLE your_table LINES TERMINATED BY '\n'"
+
+
+			#To import a comma seperated file
+			shell> mysql -u root -p -e " USE dbname; LOAD DATA LOCAL INFILE '/path/Import_File' REPLACE INTO TABLE your_table FIELDS TERMINATED BY  ',' LINES TERMINATED BY '\n'"=============================================================================================================================================================
+			
+	For Mass Replace/Insert Database: 
+	
+			# Command Line: shell>, or cmd
+			shell> mysql -u root -p importing_db < /path/db_backup.sql
+			
+			* file created via mysqldump was created with no-create-info specified 
+				Will place data into existing tables if no duplicates.  Will have an error if tables do not exist or duplicates exist.
+			  
+			* file created via mysqldump default, that include create info
+			    will create new tables if not present in database, will overwrite existing tables.
+	
+
+2)	To Delete: 
+		
+			ex: UPDATE table SET value=NULL 
+		     	WHERE value LIKE 'M_ke me NULL';
+
+			ex: UPDATE table SET value=NULL 
+		    	WHERE value LIKE 'Make [a-m][a-e] NULL';
+
+			ex: UPDATE table SET value=NULL 
+		     	WHERE value LIKE 'Make \\[me\\] NULL';
+
+			ex: UPDATE table SET value=NULL 
+		     	WHERE value LIKE 'Make m% NULL';
+
+			ex: UPDATE table SET value=NULL 
+		     	WHERE value LIKE 'Make m. NULL';
+
+	
+	Delete an entire table row:
+
+			DELETE FROM products WHERE prod_id = 12134;
+	
+	Delete an entire table row of Partition:
+	
+			DELETE FROM employees PARTITION (p0)
+			WHERE fname LIKE 'j%';
+	
+	Remove Partition without effecting data:
+	
+			ALTER TABLE REMOVE PARTITIONING;
+	
+	Delete Entire Partition: 
+
+			(range/list) 
+			ALTER TABLE t1 DROP PARTITION p0;
+			
+			(hash/key)
+			ALTER TABLE t2 COALESCE PARTITION p1;
+	
+	For Mass Deletion table:
+
+			Clear table of all data while preserving table:
+				TRUNCATE TABLE tbl_name;
+
+			Delete Table, removes table completely including structure:
+				Drop table tbl_name;
+
+	For Mass Delete database:
+
+			Drop Database database_name;
+
+
+			
+3)	To Insert: 
+
+	
+		1) Example of an insert of a single row to Table, or an insert into multiple columns
+
+			INSERT INTO products( product_id, product_name, product_description, product_location, product_quantity)
+			VALUES(NULL,'CD-RW Model 4543','CD Writer','Shelf 4B',10);
+
+		2) Adding multiple rows to a table:
+
+			INSERT INTO products( product_id, product_name, product_description, product_location, product_quantity)
+			VALUES(NULL,'CD-RW Model 4543','CD Writer','Shelf 4B',10),
+		     	      (NULL,'Disk Drive 4500','60Gb 4500rpm Disk Drive','Shelf 6A',100),
+		              (NULL,'Disk Drive 4500','60Gb 4500rpm Disk Drive','Shelf 6A',100);
+
+		3) Inserting the results of Query:
+
+			INSERT INTO new_products(product_id,product_name,product_description,product_location,product_quantity)
+			SELECT product_id,product_name,product_description,product_location,product_quantity
+			FROM old_products;
+   
+	For Mass Insertion:
+
+		For Mass Insertion Tables:  (same as if you would replace.  This example ignores duplicates from the inserted file contents)
+
+			#To import a tab seperated file
+			shell> mysqlimport -u user -p --local --ignore db_name /path/client_info.txt, /path/inventory.txt, /path/purchase_orders.txt(...)
+
+
+			#To import a comma seperated file
+			shell> mysqlimport -u user -p --fields-terminated-by=, --local --ignore db_name /path/client_info.csv, /path/inventory.csv, /path/purchase_orders.csv(...)
+
+
+			#To import a tab seperated file
+			shell> mysql -u root -p -e " USE dbname; LOAD DATA LOCAL INFILE '/path/Import_File' IGNORE INTO TABLE your_table LINES TERMINATED BY '\n'"
+
+
+			#To import a comma seperated file
+			shell> mysql -u root -p -e " USE dbname; LOAD DATA LOCAL INFILE '/path/Import_File' IGNORE INTO TABLE your_table FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'"
+
+
+	Insert into Selected Partions only:
+
+			mysql> INSERT INTO employees PARTITION (p3, p4. p5) VALUES
+			(24, 'Tim', 'Greene', 3, 1),  (26, 'Linda', 'Mills', 2, 1);	
+	
+	For Mass Replace/Insert Database: 
+	
+			# Command Line: shell>, or cmd
+			shell> mysql -u root -p importing_db < /path/db_backup.sql
+			
+			* file created via mysqldump was created with no-create-info specified 
+				Will place data into existing tables if no duplicates.  Will have an error if tables do not exist or duplicates exist.
+			  
+			* file created via mysqldump default, that include create info
+			    will create new tables if not present in database, will overwrite existing tables.
+
+	
+
+
+
+
+
+
+
+
+

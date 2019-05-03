@@ -1,0 +1,43 @@
+::Lin Tsun Chin
+::2017, Mysql Code Portfolio Examples
+
+
+:: How to run in command line
+:: cmd> C:/Path/(Bat file)Run multiple scripts.bat
+
+:: Windows Command Line Code:  Definition within a file  
+:: https://ss64.com/nt/for_r.html
+	
+@echo off 														& REM echo off turns off path to file readout 
+
+for /r C:/mysql_test/ %%i in (*.sql) do (echo %%i 				& REM Shows the current filename
+
+mysql --defaults-file="C:/mysql_test/sample.cnf" < %%i)			& REM Calls MySQL, references password stored in options file, and runs the current file in %%i variable in the for iteration
+
+		::https://dev.mysql.com/doc/refman/5.6/en/password-security-user.html
+		::https://dev.mysql.com/doc/refman/5.6/en/option-file-options.html
+		
+		:: NOTES nn Password security  
+		:: -p cannot be used as you will have to enter the password in each loop iteration
+		:: for better security instead of hard coding the password into .bat file
+		:: Do this instead.
+				:: Store password in an options file.
+				:: Run Bat to use options file for password shown as above.
+				:: Example of what is contained within options file sample.cnf
+				
+				::	[client]
+				::	# The following password will be sent to all standard MySQL clients
+				::  user=root
+				::	password=password
+
+				::	[mysql]
+				::	no-auto-rehash
+				::	connect_timeout=2
+
+		:: Other ref
+		:: http://stackoverflow.com/questions/16299603/mysql-utilities-my-cnf-option-file
+		:: http://stackoverflow.com/questions/17827340/protect-the-password-when-using-mysql-in-an-unattended-bash-script
+		:: http://serverfault.com/questions/788718/mysql-rejects-login-attempts-when-password-is-stored-in-options-file
+
+
+

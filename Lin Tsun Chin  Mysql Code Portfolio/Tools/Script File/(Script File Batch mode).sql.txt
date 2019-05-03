@@ -1,0 +1,50 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+#Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+#Script file, acting in batch mode, to run a batch of stuff 
+
+# MySQL Script Code:  Definition within a file  
+											
+	# executes some code, setting variable values to pass into stored procedures and functions										
+	
+		#pass into film_in_stock / film_not_in_stock
+		SET @p_film_id = 1;				#type INT 
+		SET @p_store_id = 1;			#type INT
+		SET @p_film_count = 1;			#type INT
+	
+		#pass into get_customer_balance
+		SET @p_customer_id = 1;			#type INT
+		SET @p_effective_date =	'2005-01-01 12:00:00';		#type DATETIME
+		
+	
+	# executes some code, shows stored procedures and functions accociated with database specified by @db_name
+	
+		Set @db_name='sakila';
+	
+		SELECT ROUTINE_TYPE, ROUTINE_NAME		
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_SCHEMA= @db_name;
+	
+	
+	# Calls some stored procedures, functions, and scripts to run
+	
+		CALL film_in_stock(@p_film_id, @p_store_id, @p_film_count);				# calls a stored procedure from withing database sakila
+		CALL film_not_in_stock(@p_film_id, @p_store_id, @p_film_count);			# calls a stored procedure from withing database sakila
+	
+		Select get_customer_balance(@p_customer_id, @p_effective_date);		# calls a stored function from withing database sakila
+	
+		#source C:/select_some_stuff.sql;		# calls a script file select_some_stuff on path C. commented off to not activate
+	
+
+
+#How to run from shell>(windows): (shows brackets +---+)
+
+#		mysql -u username -p your_database -e "source C:/Filepath/(Script File Batch mode).sql;"
+
+#unable to pass in values in this form (does not show brackets)
+#		mysql -u username -p your_database < "C:/Filepath/(Script File Batch mode).sql;"				      
+
+#How to run from mysql>(windows):  (shows brackets +---+)
+
+#		mysql> source C:/Filepath/(Script File Batch mode).sql;

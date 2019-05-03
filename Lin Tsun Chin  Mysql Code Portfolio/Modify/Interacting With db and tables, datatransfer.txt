@@ -1,0 +1,240 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+1)  Import database to fresh empty database :
+	
+	1)Create fresh database:
+		
+		shell> mysql -u username -p -e "Create Database Importing_Db"
+			# Creates a database called Importing_Db
+		
+	2)Create file to import
+		
+		shell> mysqldump -u username -p Exporting_Db -d > /path/Exported_Db.sql  
+			# Creates a file Exported_db with database stucture only: (tables, columnes, schemas, no row data)
+			# using Exporting_Db as reference
+
+		shell> mysqldump -u username -p Exporting_Db > /path/Exported_Db.sql  
+			# Creates file Exported_Db containing both schema and data of database Exporting_Db
+			
+	3)Import file:
+		
+ 		shell> mysql -u username -p Importing_Db < /path/Exported_Db.sql 
+			# Inports file Exported_Db into Importing_Db
+			# Make sure Exported_Db.sql does not include anything extra, such as non desirable tables or overlaps
+			# as using this import method will import everything in Exported_Db.sql.
+
+
+2)  Import database to another database (assumed structure already there to support table format and database has existing data)
+
+
+	1) Export database to a file 
+	
+		shell> mysqldump -u username -p Exporting_Db > /path/Exported_Db.sql 
+			# will Export Exported_Db database to Exporting file, however...
+			# Created file contains logic that Will drop and create new table if Exist, overwriting all data. Any old data will be lost.
+
+		shell> mysqldump -u username -p Exporting_Db --no-create-info > /path/Exported_Db.sql 
+			# Specify --no-create-info to preserve existing table data, to make importing only append to database when imported
+			# When importing this file, ignore or replace must be specified in case of duplicate information to avoid errors 
+			# Depending on the method if import, duplicate data will....
+			# Using < an error will occur on duplicates
+			# Using mysqlimport, and error will occur and the rest of the file will be skipped unless ignore or replace is specified.
+
+
+		shell> mysqldump -u username -p Exporting_Db --no-create-info --replace > /path/Exported_Db.sql 
+			# Specify --no-create-info to preserve existing table data, any differences between existing data and 
+			# imported data, will be replaced with the imported data.  --replace
+
+
+	2) Import to database created file
+
+		shell> mysql -u username -p Importing_Db < Exported_Db.sql 
+			# Make sure Exported_Db.sql does not include anything extra, such as non desirable tables or overlaps
+			# as using this import method will import everything in Exported_Db.sql.
+
+	
+3)  Import Select table to database (table will retain its orginal name/structure from export) 
+	
+	1) Export database table to a file with data (for use with existing table with appropriate structure)
+
+		shell> mysqldump -u username -p Exporting_Db Exporting_Tbl(...) > /path/Exported_Tbl.sql  
+		
+			# Used when need to move tables to database, also to screen out overlapped tables 
+			# as not affect database by ONLY including tables specified in import file.
+			# Created file contains logic that Will drop and create new table if Exist, overwriting all data. Any old data will be lost.
+
+
+		shell> mysqldump -u user -p Exporting_Db --ignore-table=Exporting_Db.Excluded_tbl(...) --no-create-info > /path/Exported_Tbl.sql
+
+			# Used when need to move tables to database, also to screen out overlapped tables 
+			# as not affect database by NOT including tables specified in the import file.
+
+		shell> mysqldump -u username -p Exporting_Db Exporting_Tbl(...) --no-create-info > /path/Exported_Tbl.sql  
+
+			# Specify --no-create-info to preserve existing table data, to make importing 
+			# only append to database. Import file will only includes selected tables. 
+			# Depending on the method if import, duplicate data will....
+			# Using < an error will occur on duplicates
+			# Using mysqlimport, and error will occur and the rest of the file will be skipped unless ignore or replace is specified.
+
+		shell> mysqldump -u username -p Exporting_Db Exporting_Tbl(...) --no-create-info --replace > /path/Exported_Tbl.sql
+
+			# Specify --no-create-info to preserve existing table data, any differences between 
+			# existing data and imported data, will be replaced with the imported data.
+			# Import file only includes selected tables. 
+	
+
+
+	2) Import using either of the two methods shown below
+	
+		shell> mysqlimport -u user -p --local --ignore Importing_Db /path/Exported_Tbl_1.txt, /path/Exported_Tbl_2.txt, /path/Exported_Tbl_3.txt(...)
+			# This will import to a table, corresponding to file name.  For example, importing furniture.sql will import to furniture table if it exist.		
+			# load data infile and mysql import are identical in function
+			# because --ignore is specified mysql will ignore any duplicates.
+			# to overwrite duplicates use --replace
+			# without specifying ignore or replace will cause an error when duplicate is found
+	
+
+		shell> mysql -u username -p Importing_Db < Exported_Tbl.sql  		
+			# Make sure Exported_Db.sql does not include anything extra, such as non desirable tables or overlaps
+			# as using this import method will import everything in Exported_Db.sql.
+			# because < is used mysql will overwrite any existince table with the name Exported_Table.sql
+		
+	
+4) pipe from one database to other database
+
+	Pipe entire contents
+
+		1) shell>mysqldump -u username –p database_name|mysql -u username -p new_database
+
+			# |  This pipes the output of the left side, mysqldump, database_name into 
+			# the input on the right side, new_database
+
+	Pipe selected tables
+
+		2) shell>mysqldump -u username –p database_name table_name(...)|mysql -u username -p new_database
+
+			# same process, only further defining the left side as database_name table_name in mysqldump.
+
+	Pipe all tables but exclude selected
+
+		3) shell>mysqldump -u user -p db_name --ignore-table=db_name.Excluded_tbl(...)|mysql -u username -p new_database
+			
+			# same process, only this time --ignore is used to exlude Excluded_tbl in mysqldump.
+
+5)  Working with a database.sql file to isolate a table to create a single table.sql file for import.
+
+    	1) Create a new DB
+
+    		shell>mysql -u username -p -e "CREATE DATABASE temp_db"
+
+			# Creates a new database temp_db  using CREATE
+
+    	2) Insert the .sql file that contains the desired table into the new DB
+
+   		shell>mysql -u username -p temp_db < /path/database_file.sql
+
+			# Uses < to insert contents of database_file.sql into temp_db			
+
+    	3) Export the desired table to a file
+
+    		shell>mysqldump -u username -p temp_db selected_single_table > /path/exported_table.sql
+
+			# uses mysqldump to take temp_db selected_single_table and dump that to file exported_table.sql
+
+    	4) Import desired table into database
+
+    		shell>mysql -u username -p importing_database < /path/exported_table.sql
+
+			# Uses < to insert contents of exported_table.sql into importing_database	
+
+    	5) Delete the temp_db 
+
+    		shell>mysql -u username -p -e "Drop Database temp_db"
+
+			# Drops database temp_db after it is no longer needed.
+
+6) Inserting directly from one table to another
+
+	# to run from cmd prompt
+	* mysql -u user -p -e"<the following code below>" 
+	* else you can just type the code below directly into mysql terminal	
+
+
+	1) To create a table schema for the purpose of copying a table.
+
+		mysql> CREATE TABLE table_cp LIKE table_orginal;
+			# Creates a table called table_cp identical to table_original containing do data.
+		
+	2) To insert data from one table column to different table column. 
+
+	mysql> INSERT INTO tbl_cp (selected_column)
+	       SELECT table_orginal.selected_column
+	       FROM table_orginal 
+ 	       WHERE table_orginal.selected_colume > 100;
+			# Insert directly into table tbl_cp columns specified such as selected_columne... from table_orginal
+			# The where condition is used as an example to further define what information is desired within a table columm
+
+	3) Copy from one table to another multiple table columns.
+
+	mysql> INSERT INTO tbl_cp (selected_column_1, selected_column_2,selected_column_3)
+               SELECT table_orginal.selected_column_1, table_orginal.selected_column_2, table_orginal.selected_column_3
+               FROM table_orginal
+               WHERE table_orginal.some_other_relation = 'New_Jersey';
+			# The same as above, only multiple columns are transfered to the table at once.
+ 
+
+
+7) Working with a temp table. 
+
+   1) create a new temp table with identical table schema to the table you would like to extract from using 'LIKE' command
+	
+	mysql> CREATE TEMPORARY TABLE Temp_Holder LIKE Table_With_Info_To_Export;
+		# Creates a temp table Temp_Holder with identical table Schema to Table_With_Info_To_Export.  
+		# This will be created withing the database that Table_With_Info_To_Export exist.
+
+   2) Copy contents over to temporary table using either of these methods 
+
+
+	shell>  mysqldump -u username -p Exporting_Db Exporting_Tbl(...) > /path/Temp_Holder.txt
+		mysqlimport -u user -ppassword --local ignore db_name /path/Temp_Holder.txt
+			# Transfers data from Exporting_Tbl to table Temp_Holder by way of
+			# exporting data from Exporting_Tble using mysqldump
+			# and importing data into table Temp_Holder using mysqlimport.   	
+	or
+
+	mysql>  SELECT * INTO OUTFILE '/tmp/Temp_Holder.txt' FROM Exporting_Tbl;
+		WHERE user_id < 100
+		LOAD DATA LOCAL INFILE '/tmp/Temp_Holder.txt' INTO TABLE Temp_Holder;
+			# Transfers data from Exporting_Tbl to table Temp_Holder by way of
+			# exporting data from Exporting_Tble using INTO OUTFILE
+			# and importing data into table Temp_Holder using load data infile.
+			# To execute from cmd use mysql -e"code here" 
+	
+	or
+
+	mysql> INSERT INTO Temp_Holder (selected_column_1, selected_column_2,selected_column_3)
+               SELECT table_orginal.selected_column_1, table_orginal.selected_column_2, table_orginal.selected_column_3
+               FROM table_orginal
+		# Insert directly into table Temp_Holder columns specified such as selected_columne... from table_orginal
+		# To execute from cmd use mysql -e"code here" 
+		
+
+   3) after you modify the temp table dump the table to file 
+
+	shell> mysqldump -u username -p dbname Temp_Holder > /path/Temp_Holder_Table_Data.sql
+		# runs from cmd, mysqldump, that dumps Table, Temp_Holder to the path specified as file Temp_Holder_Table_Data.sql.	
+		# dbname should be the database that holds temp table TempHolder.
+
+   4) delete temp table
+
+	mysql> Drop table Temp_Holder;
+		# Drops the Temp Table Temp_Holder from database.
+		# To execute from cmd use mysql -e"code here" 
+
+
+
+
+
+

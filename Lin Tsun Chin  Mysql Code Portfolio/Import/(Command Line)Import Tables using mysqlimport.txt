@@ -1,0 +1,20 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd
+
+#To import a tab seperated file
+shell> mysqlimport -u user -p --local --ignore db_name /path/client_info.txt, /path/inventory.txt, /path/purchase_orders.txt(...)
+
+
+#To import a comma seperated file
+shell> mysqlimport -u user -p --fields-terminated-by=, --local --ignore db_name /path/client_info.csv, /path/inventory.csv, /path/purchase_orders.csv(...)
+
+# This uses the shell>, or cmd, command line to import into mysql database dbname,
+# using the mysql command mysqlimport, its takes a text file, either tab seperated or command seperated
+# and transfers that data into an existing table.  In this case mysql will correlate the text file name with the table name.  
+# -- local denominates that the file is on the local computer, not the server host
+# -- fields-terminated-by=, specifies the columns within the tables are seperated by a "," rather then tab.
+# -- replace, -r instructs mysql to replace with input rows any duplicate existing rows with the same unique key value. *
+# -- ignore, -i instructs mysql to skip input rows that duplicate an existing row on a unique key value.  *
+# * an error occurs when a duplicate key value is found and the rest of the input file is ignored if either replace or ignore instuctions are obmitted. 

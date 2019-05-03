@@ -1,0 +1,12 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd
+
+shell> mysql -u root -p -e "dbname < /path/Saved_Stored_Procedures.sql"
+
+# This uses the shell>, or cmd, command line to import into mysql database dbname, 
+# a previously saved file file or backup file saved_stored_Procedures.sql.
+# If the file contained any other data it would be added to database dbname, 
+# in this case it is assumed to be filled with stored procedures, so stored procedures will be added.
+ 

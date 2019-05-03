@@ -1,0 +1,182 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Not possible in mysql, showing word around.
+
+http://stackoverflow.com/questions/7978663/mysql-full-join
+Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+
+Full Join: returns all rows from the left table (table1) and from the right table (table2).   
+
+		* UNION REMOVES DUPLICATE DATA
+	
+				SELECT * 
+				FROM A
+				LEFT JOIN B ON A.key = B.key
+				UNION 
+				SELECT * 
+				FROM A 
+				RIGHT JOIN B ON A.key = B.key
+			
+				
+		* UNION ALL DOES NOT REMOVE DUPLICATES
+			
+				SELECT * 
+				FROM A 
+				LEFT JOIN B ON A.key = B.key
+				UNION ALL 
+				SELECT * 
+				FROM A 
+				RIGHT JOIN B ON A.key = B.key
+				WHERE A.key IS NULL
+				
+				
+		Example:  (Using Union)
+		
+					(
+					SELECT nicer_but_slower_film_list.FID, nicer_but_slower_film_list.title, nicer_but_slower_film_list.category, nicer_but_slower_film_list.price, nicer_but_slower_film_list.length, nicer_but_slower_film_list.rating
+					FROM nicer_but_slower_film_list
+					LEFT JOIN film_list ON nicer_but_slower_film_list.FID = film_list.FID
+					)
+					UNION
+					(
+					SELECT film_list.FID, film_list.title, film_list.category, film_list.price, film_list.length, film_list.rating
+					FROM film_list
+					RIGHT JOIN nicer_but_slower_film_list ON nicer_but_slower_film_list.FID = film_list.FID
+					)
+					Limit 50;
+		
+						Result
+		
+							+------+-----------------------------+-------------+-------+--------+--------+
+							| FID  | title                       | category    | price | length | rating |
+							+------+-----------------------------+-------------+-------+--------+--------+
+							|    1 | ACADEMY DINOSAUR            | Documentary |  0.99 |     86 | PG     |
+							|    2 | ACE GOLDFINGER              | Horror      |  4.99 |     48 | G      |
+							|    3 | ADAPTATION HOLES            | Documentary |  2.99 |     50 | NC-17  |
+							|    4 | AFFAIR PREJUDICE            | Horror      |  2.99 |    117 | G      |
+							|    5 | AFRICAN EGG                 | Family      |  2.99 |    130 | G      |
+							|    6 | AGENT TRUMAN                | Foreign     |  2.99 |    169 | PG     |
+							|    7 | AIRPLANE SIERRA             | Comedy      |  4.99 |     62 | PG-13  |
+							|    8 | AIRPORT POLLOCK             | Horror      |  4.99 |     54 | R      |
+							|    9 | ALABAMA DEVIL               | Horror      |  2.99 |    114 | PG-13  |
+							|   10 | ALADDIN CALENDAR            | Sports      |  4.99 |     63 | NC-17  |
+							|   11 | ALAMO VIDEOTAPE             | Foreign     |  0.99 |    126 | G      |
+							|   12 | ALASKA PHANTOM              | Music       |  0.99 |    136 | PG     |
+							|   13 | ALI FOREVER                 | Horror      |  4.99 |    150 | PG     |
+							|   14 | ALICE FANTASIA              | Classics    |  0.99 |     94 | NC-17  |
+							|   15 | ALIEN CENTER                | Foreign     |  2.99 |     46 | NC-17  |
+							|   16 | ALLEY EVOLUTION             | Foreign     |  2.99 |    180 | NC-17  |
+							|   17 | ALONE TRIP                  | Music       |  0.99 |     82 | R      |
+							|   18 | ALTER VICTORY               | Animation   |  0.99 |     57 | PG-13  |
+							|   19 | AMADEUS HOLY                | Action      |  0.99 |    113 | PG     |
+							|   20 | AMELIE HELLFIGHTERS         | Music       |  4.99 |     79 | R      |
+							|   21 | AMERICAN CIRCUS             | Action      |  4.99 |    129 | R      |
+							|   22 | AMISTAD MIDSUMMER           | New         |  2.99 |     85 | G      |
+							|   23 | ANACONDA CONFESSIONS        | Animation   |  0.99 |     92 | R      |
+							|   24 | ANALYZE HOOSIERS            | Horror      |  2.99 |    181 | R      |
+							|   25 | ANGELS LIFE                 | New         |  2.99 |     74 | G      |
+							|   26 | ANNIE IDENTITY              | Sci-Fi      |  0.99 |     86 | G      |
+							|   27 | ANONYMOUS HUMAN             | Sports      |  0.99 |    179 | NC-17  |
+							|   28 | ANTHEM LUKE                 | Comedy      |  4.99 |     91 | PG-13  |
+							|   29 | ANTITRUST TOMATOES          | Action      |  2.99 |    168 | NC-17  |
+							|   30 | ANYTHING SAVANNAH           | Horror      |  2.99 |     82 | R      |
+							|   31 | APACHE DIVINE               | Family      |  4.99 |     92 | NC-17  |
+							|   32 | APOCALYPSE FLAMINGOS        | New         |  4.99 |    119 | R      |
+							|   33 | APOLLO TEEN                 | Drama       |  2.99 |    153 | PG-13  |
+							|   34 | ARABIA DOGMA                | Horror      |  0.99 |     62 | NC-17  |
+							|   35 | ARACHNOPHOBIA ROLLERCOASTER | Horror      |  2.99 |    147 | PG-13  |
+							|   36 | ARGONAUTS TOWN              | Animation   |  0.99 |    127 | PG-13  |
+							|   37 | ARIZONA BANG                | Classics    |  2.99 |    121 | PG     |
+							|   38 | ARK RIDGEMONT               | Action      |  0.99 |     68 | NC-17  |
+							|   39 | ARMAGEDDON LOST             | Sci-Fi      |  0.99 |     99 | G      |
+							|   40 | ARMY FLINTSTONES            | Documentary |  0.99 |    148 | R      |
+							|   41 | ARSENIC INDEPENDENCE        | Travel      |  0.99 |    137 | PG     |
+							|   42 | ARTIST COLDBLOODED          | Sports      |  2.99 |    170 | NC-17  |
+							|   43 | ATLANTIS CAUSE              | Family      |  2.99 |    170 | G      |
+							|   44 | ATTACKS HATE                | Sci-Fi      |  4.99 |    113 | PG-13  |
+							|   45 | ATTRACTION NEWTON           | New         |  4.99 |     83 | PG-13  |
+							|   46 | AUTUMN CROW                 | Games       |  4.99 |    108 | G      |
+							|   47 | BABY HALL                   | Foreign     |  4.99 |    153 | NC-17  |
+							|   48 | BACKLASH UNDEFEATED         | Children    |  4.99 |    118 | PG-13  |
+							|   49 | BADMAN DAWN                 | Sci-Fi      |  2.99 |    162 | R      |
+							|   50 | BAKED CLEOPATRA             | Family      |  2.99 |    182 | G      |
+							+------+-----------------------------+-------------+-------+--------+--------+
+							50 rows in set (0.39 sec)
+
+		
+		
+		
+		Example:  (Using Union ALL, and Right Exclude [WHERE A.key is NULL])
+
+					(
+					SELECT nicer_but_slower_film_list.FID, nicer_but_slower_film_list.title, nicer_but_slower_film_list.category, nicer_but_slower_film_list.price, nicer_but_slower_film_list.length, nicer_but_slower_film_list.rating
+					FROM nicer_but_slower_film_list
+					LEFT JOIN film_list ON nicer_but_slower_film_list.FID = film_list.FID
+					)
+					UNION ALL
+					(
+					SELECT film_list.FID, film_list.title, film_list.category, film_list.price, film_list.length, film_list.rating
+					FROM film_list
+					RIGHT JOIN nicer_but_slower_film_list ON nicer_but_slower_film_list.FID = film_list.FID
+					WHERE film_list.FID IS NULL
+					)
+					Limit 50;
+
+						Result
+							
+							+------+-----------------------------+-------------+-------+--------+--------+
+							| FID  | title                       | category    | price | length | rating |
+							+------+-----------------------------+-------------+-------+--------+--------+
+							|    1 | ACADEMY DINOSAUR            | Documentary |  0.99 |     86 | PG     |
+							|    2 | ACE GOLDFINGER              | Horror      |  4.99 |     48 | G      |
+							|    3 | ADAPTATION HOLES            | Documentary |  2.99 |     50 | NC-17  |
+							|    4 | AFFAIR PREJUDICE            | Horror      |  2.99 |    117 | G      |
+							|    5 | AFRICAN EGG                 | Family      |  2.99 |    130 | G      |
+							|    6 | AGENT TRUMAN                | Foreign     |  2.99 |    169 | PG     |
+							|    7 | AIRPLANE SIERRA             | Comedy      |  4.99 |     62 | PG-13  |
+							|    8 | AIRPORT POLLOCK             | Horror      |  4.99 |     54 | R      |
+							|    9 | ALABAMA DEVIL               | Horror      |  2.99 |    114 | PG-13  |
+							|   10 | ALADDIN CALENDAR            | Sports      |  4.99 |     63 | NC-17  |
+							|   11 | ALAMO VIDEOTAPE             | Foreign     |  0.99 |    126 | G      |
+							|   12 | ALASKA PHANTOM              | Music       |  0.99 |    136 | PG     |
+							|   13 | ALI FOREVER                 | Horror      |  4.99 |    150 | PG     |
+							|   14 | ALICE FANTASIA              | Classics    |  0.99 |     94 | NC-17  |
+							|   15 | ALIEN CENTER                | Foreign     |  2.99 |     46 | NC-17  |
+							|   16 | ALLEY EVOLUTION             | Foreign     |  2.99 |    180 | NC-17  |
+							|   17 | ALONE TRIP                  | Music       |  0.99 |     82 | R      |
+							|   18 | ALTER VICTORY               | Animation   |  0.99 |     57 | PG-13  |
+							|   19 | AMADEUS HOLY                | Action      |  0.99 |    113 | PG     |
+							|   20 | AMELIE HELLFIGHTERS         | Music       |  4.99 |     79 | R      |
+							|   21 | AMERICAN CIRCUS             | Action      |  4.99 |    129 | R      |
+							|   22 | AMISTAD MIDSUMMER           | New         |  2.99 |     85 | G      |
+							|   23 | ANACONDA CONFESSIONS        | Animation   |  0.99 |     92 | R      |
+							|   24 | ANALYZE HOOSIERS            | Horror      |  2.99 |    181 | R      |
+							|   25 | ANGELS LIFE                 | New         |  2.99 |     74 | G      |
+							|   26 | ANNIE IDENTITY              | Sci-Fi      |  0.99 |     86 | G      |
+							|   27 | ANONYMOUS HUMAN             | Sports      |  0.99 |    179 | NC-17  |
+							|   28 | ANTHEM LUKE                 | Comedy      |  4.99 |     91 | PG-13  |
+							|   29 | ANTITRUST TOMATOES          | Action      |  2.99 |    168 | NC-17  |
+							|   30 | ANYTHING SAVANNAH           | Horror      |  2.99 |     82 | R      |
+							|   31 | APACHE DIVINE               | Family      |  4.99 |     92 | NC-17  |
+							|   32 | APOCALYPSE FLAMINGOS        | New         |  4.99 |    119 | R      |
+							|   33 | APOLLO TEEN                 | Drama       |  2.99 |    153 | PG-13  |
+							|   34 | ARABIA DOGMA                | Horror      |  0.99 |     62 | NC-17  |
+							|   35 | ARACHNOPHOBIA ROLLERCOASTER | Horror      |  2.99 |    147 | PG-13  |
+							|   36 | ARGONAUTS TOWN              | Animation   |  0.99 |    127 | PG-13  |
+							|   37 | ARIZONA BANG                | Classics    |  2.99 |    121 | PG     |
+							|   38 | ARK RIDGEMONT               | Action      |  0.99 |     68 | NC-17  |
+							|   39 | ARMAGEDDON LOST             | Sci-Fi      |  0.99 |     99 | G      |
+							|   40 | ARMY FLINTSTONES            | Documentary |  0.99 |    148 | R      |
+							|   41 | ARSENIC INDEPENDENCE        | Travel      |  0.99 |    137 | PG     |
+							|   42 | ARTIST COLDBLOODED          | Sports      |  2.99 |    170 | NC-17  |
+							|   43 | ATLANTIS CAUSE              | Family      |  2.99 |    170 | G      |
+							|   44 | ATTACKS HATE                | Sci-Fi      |  4.99 |    113 | PG-13  |
+							|   45 | ATTRACTION NEWTON           | New         |  4.99 |     83 | PG-13  |
+							|   46 | AUTUMN CROW                 | Games       |  4.99 |    108 | G      |
+							|   47 | BABY HALL                   | Foreign     |  4.99 |    153 | NC-17  |
+							|   48 | BACKLASH UNDEFEATED         | Children    |  4.99 |    118 | PG-13  |
+							|   49 | BADMAN DAWN                 | Sci-Fi      |  2.99 |    162 | R      |
+							|   50 | BAKED CLEOPATRA             | Family      |  2.99 |    182 | G      |
+							+------+-----------------------------+-------------+-------+--------+--------+
+							50 rows in set (0.38 sec)

@@ -1,0 +1,602 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Everything below is run from the mysql console mysql> 
+
+*source: http://www.techotopia.com/
+
+=================================================
+Basic table Interaction:
+
+
+	
+	1) ADD TABLE
+		Create table new_table;
+
+	2) DELETE TABLE:
+		Drop table new_table;
+
+	3) Add a column:
+		ALTER TABLE products ADD product_description CHAR(20);
+
+	4) Remove a column:
+
+		ALTER TABLE products DROP COLUMN product_description;
+
+	5) Clear table of all data while preserving table:
+		
+		TRUNCATE TABLE tbl_name
+
+	6) Changing Order or column in table:
+
+		Move to beginning:
+			ALTER TABLE products ADD product_description CHAR(20) FIRST;
+		Move anywhere else:
+			ALTER TABLE products ADD product_description CHAR(20) AFTER product_name;
+
+	7) Change Table name:
+
+		RENAME TABLE products TO new_products;
+		
+		or
+
+		ALTER TABLE customer RENAME customer2;
+
+	8) Change column name and datatype:
+	
+		ALTER TABLE customer CHANGE customer_name new_customer_name INTEGER;
+
+	9) Change column Data Type:
+
+		ALTER TABLE products MODIFY prod_id TINYINT;
+
+	10) Working with AUTO_INCREMENT
+
+		Make a table that Auto Increments
+
+			CREATE TABLE Auto_Increment_Example(ID_Num int NOT NULL AUTO_INCREMENT)
+
+		Assigning the values in which auto Increment starts from
+
+			
+			CREATE TABLE Auto_Increment_Example(ID_Num int NOT NULL AUTO_INCREMENT = 100)
+
+			mysql> ALTER TABLE tbl AUTO_INCREMENT = 100;
+
+		
+		ADD AUTO_INCREMENT
+
+			ALTER TABLE tbl ADD id INT PRIMARY KEY AUTO_INCREMENT;
+
+		Remove AUTO_INCREMENT ***
+
+			ALTER TABLE tbl MODIFY id int(11), 
+                  DROP PRIMARY KEY; 
+
+
+=================================================
+Inserting Data into a MySQL Database
+
+
+	1) Example of an insert of a single row to Table, or an insert into multiple columns
+
+		INSERT INTO products( product_id, product_name, product_description, product_location, product_quantity)
+		VALUES(NULL,'CD-RW Model 4543','CD Writer','Shelf 4B',10);
+
+	
+	2) Adding multiple rows to a table 
+
+		INSERT INTO products( product_id, product_name, product_description, product_location, product_quantity)
+		VALUES(NULL,'CD-RW Model 4543','CD Writer','Shelf 4B',10),
+		      (NULL,'Disk Drive 4500','60Gb 4500rpm Disk Drive','Shelf 6A',100),
+		      (NULL,'Disk Drive 4500','60Gb 4500rpm Disk Drive','Shelf 6A',100);
+
+
+	3) Inserting the results of Query
+
+		INSERT INTO new_products(product_id,product_name,product_description,product_location,product_quantity)
+		SELECT product_id,product_name,product_description,product_location,product_quantity
+		FROM old_products;
+   
+=================================================
+Updating and Deleting MySQL Data
+
+	1) Change simgle column data in table
+
+   		UPDATE products
+		SET prod_desc = 'Size 10 Red Shoe'
+		WHERE prod_id = 12134;
+
+	2) Change Multiple column in table 	
+
+		UPDATE products
+		SET prod_desc = 'Size 10 Red Shoe',
+  		    prod_name = 'Big Red Shoes'
+		WHERE prod_id = 12134;
+
+
+	3) Delete an entire table row
+
+		DELETE FROM products WHERE prod_id = 12134;
+	
+
+	4) Replace column data with null 
+
+		UPDATE table SET value=NULL WHERE value=0
+
+===================================================
+Find and Replace techniques:  
+
+	*** Tag on the {where... criteria} to use with any query
+		
+		ex:  UPDATE table SET value=NULL 
+		     WHERE value LIKE 'M_ke me NULL';
+
+		ex:  UPDATE table SET value=NULL 
+		     WHERE value LIKE 'Make [a-m][a-e] NULL';
+
+		ex:  UPDATE table SET value=NULL 
+		     WHERE value LIKE 'Make \\[me\\] NULL';
+		
+
+
+
+	1) Wildcard Filtering using LIKE and underscore _ wildcard
+
+	  	 SELECT * FROM product WHERE prod_name LIKE 'Gr_y Computer Case';
+
+	2) Searching By Keywords
+		 
+		 SELECT * FROM product WHERE prod_name IN ('Grey Computer Case', 'Gray Computer Case');
+
+	3) Wildcard Filtering using Multiple Character Wildcard (%) wildcard. 
+
+		mysql> SELECT * FROM product WHERE prod_name LIKE 'WildTech%';
+		+-----------+--------------------------+------------------------+
+		| prod_code | prod_name                | prod_desc              |
+		+-----------+--------------------------+------------------------+
+		|         3 | WildTech 250Gb 1700      | SATA Disk Drive        |
+	        |         3 | WildTech Mouse (Optical) | Wireless Optical Mouse |
+		+-----------+--------------------------+------------------------+
+
+
+	4) Regular Expression Character Matching the REGEXP operator
+
+ 		dot character matching (.) indicates that any character in this position in the text will be considered a match. 
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP 'Gr.y Computer Case';
+			+-----------+--------------------+-------------------+
+			| prod_code | prod_name          | prod_desc         |
+			+-----------+--------------------+-------------------+
+			|        11 | Grey Computer Case | ATX PC CASE       |
+			|        12 | Gray Computer Case | ATX PC CASE (USA) |
+			+-----------+--------------------+-------------------+
+
+
+		Matching from a Group of Characters [abcd]
+
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP 'Gr[ae]y Computer Case';
+			+-----------+--------------------+-------------------+
+			| prod_code | prod_name          | prod_desc         |
+			+-----------+--------------------+-------------------+
+			|        11 | Grey Computer Case | ATX PC CASE       |
+			|        12 | Gray Computer Case | ATX PC CASE (USA) |
+			+-----------+--------------------+-------------------+
+
+
+		Matching from a Range of Characters, ex [1-6], ex [a-f]  
+
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP 'CD-RW Model [1-6]543';
+			+-----------+------------------+-----------+
+			| prod_code | prod_name        | prod_desc |
+			+-----------+------------------+-----------+
+			|         1 | CD-RW Model 4543 | CD Writer |
+			|        14 | CD-RW Model 5543 | CD Writer |
+			+-----------+------------------+-----------+
+
+
+		Handling Special Characters with escape (\\)
+
+
+			(without esape, it searches any of these numbers because instructed []  are not escaped)
+			mysql> SELECT * FROM product WHERE prod_name REGEXP 'CD-RW Model [7543]';
+			+-----------+------------------+-----------+
+			| prod_code | prod_name        | prod_desc |
+			+-----------+------------------+-----------+
+			|         1 | CD-RW Model 4543 | CD Writer |		
+			|        14 | CD-RW Model 5543 | CD Writer |
+			+-----------+------------------+-----------+
+
+		
+			with esacape numbers become like a defined variable look for = "[7543]"  where \\[ and \\] esacpe special chars [] keeping them from 			falsy instructing
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP 'CD-RW Model \\[7543\\]';
+			+-----------+--------------------+-----------+
+			| prod_code | prod_name          | prod_desc |
+			+-----------+--------------------+-----------+
+			|        17 | CD-RW Model [7543] | CD Writer |
+			+-----------+--------------------+-----------+
+		
+
+		Regular Expressions and Whitespace Characters
+
+			Metacharacter	Description
+			\\n	New line (line feed)
+			\\f	Form feed
+			\\t	Tab
+			\\r	Carriage return
+			\\v	Vertical tab
+
+		Matching by Character Type
+
+			Class Keyword	Description of Matches
+			[[:alnum:]]	Alphanumeric - any number or letter. Equivalent to [a-z], [A-Z] and [0-9]
+			[[:alpha:]]	Alpha - any letter. Equivalent to [a-z] and [A-Z]
+			[[:blank:]]	Space or Tab. Equivalent to [\\t] and [ ]
+			[[:cntrl:]]	ASCII Control Character
+			[[:digit:]]	Numeric. Equivalent to [0-9]
+			[[:graph:]]	Any character with the exception of space
+			[[:lower:]]	Lower case letters. Equivalent to [a-z]
+			[[:print:]]	Any printable character
+			[[:punct:]]	Characters that are neither control characters, nor alphanumeric (i.e punctuation characters)
+			[[:space:]]	Any whitespace character (tab, new line, form feed, space etc)
+			[[:upper:]]	Upper case letters. Equivalent to [A-Z]
+			[[:xdigit:]]	Any hexadecimal digit. Equivalent to [A-F], [a-f] and [0-9]
+
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP 'One[[:digit:]]One';
+			+-----------+-----------------+----------------+
+			| prod_code | prod_name       | prod_desc      |
+			+-----------+-----------------+----------------+
+			|        19 | One2One USB Hub | 4 Port USB Hub |
+			+-----------+-----------------+----------------+
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP 'One[[:punct:]]One';
+			+-----------+----------------------+----------------+
+			| prod_code | prod_name            | prod_desc      |
+			+-----------+----------------------+----------------+
+			|        18 | One&One VoIP Headset | Stereo Headset |
+			+-----------+----------------------+----------------+
+
+
+		Regular Expression Repetition Metacharacters
+
+			*	Any number of matches
+			+	One or more matches
+			{n}	n number of matches
+			{n,}	Not less than n number of matches
+			{n1,n2}	A range of matches between n1 and n2
+			?	Optional single character match (character my be present or not to qualify for a match)
+
+			4 digit number sequences search in prod_name column:
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP '[[:digit:]]{3}';
+			+-----------+---------------------+-----------------+
+			| prod_code | prod_name           | prod_desc       |
+			+-----------+---------------------+-----------------+
+			|         1 | CD-RW Model 4543    | CD Writer       |
+			+-----------+---------------------+-----------------+
+
+
+			Only 4 digit sequences:
+
+			mysql> SELECT * FROM product WHERE prod_name REGEXP '[[:digit:]]{4,}';
+			+-----------+---------------------+-----------------+
+			| prod_code | prod_name           | prod_desc       |
+			+-----------+---------------------+-----------------+
+			|         1 | CD-RW Model 4543    | CD Writer       |
+			+-----------+---------------------+-----------------+
+
+
+		The '?' metacharacter is particularly useful when we need to allow for plural words. 
+
+			mysql> SELECT * FROM product WHERE prod_desc REGEXP 'Drives?';
+			+-----------+------------------------+--------------------+
+			| prod_code | prod_name              | prod_desc          |
+			+-----------+------------------------+--------------------+
+			|         3 | WildTech 250Gb 1700    | SATA Disk Drive    |
+			|        20 | MasterSlave Multi-pack | 5 SATA Disk Drives |
+			+-----------+------------------------+--------------------+
+
+		Matching by Text Position
+
+			Metacharacter	Description
+			^	Beginning of text
+			$	End of text
+			[[:<:]]	Start of word
+			[[:>:]]	End of word
+
+
+		search for text that begins with a digit:
+
+			mysql> SELECT prod_desc FROM product WHERE prod_desc REGEXP '^[[:digit:]]';
+			+--------------------+
+			| prod_desc          |
+			+--------------------+
+			| 4 Port USB Hub     |
+			| 5 SATA Disk Drives |
+			+--------------------+
+
+		search for text that ends in the word 'Phone':
+
+			mysql> SELECT prod_desc FROM product WHERE prod_desc REGEXP 'Phone$';
+			+--------------+
+			| prod_desc    |
+			+--------------+
+			| Smart Phone  |
+			| Mobile Phone |
+			+--------------+
+
+		search for the word 'one' as a single character 
+
+			mysql> SELECT prod_name FROM product WHERE prod_name REGEXP '[[:<:]]One[[:>:]]';
+			+----------------------+
+			| prod_name            |
+			+----------------------+
+			| Level One Firewall   |
+			+----------------------+
+
+
+==============================
+Text Manipulation:  (these do not effect the table when used in this query form)
+
+
+	*1) Upper Case Selected. 
+		mysql> select UPPER(prod_name) from product where prod_code=4;
+			+--------------------------+
+			| UPPER(prod_name)         |
+			+--------------------------+
+			| MICROSOFT 10-20 KEYBOARD |
+			+--------------------------+
+
+
+	2) Replace one word with another. 
+
+		mysql> SELECT  REPLACE(prod_name, 'Microsoft', 'Apple') FROM product where prod_code=4;
+			+------------------------------------------+
+			| REPLACE(prod_name, 'Microsoft', 'Apple') |
+			+------------------------------------------+
+			| Apple 10-20 Keyboard                     |
+			+------------------------------------------+
+
+
+	
+	3) Combine text string from query. 
+	
+		mysql> SELECT Concat(supplier_name, ' ', supplier_address) FROM suppliers;
+			+----------------------------------------------+
+			| Concat(supplier_name, ' ', supplier_address) |
+			+----------------------------------------------+
+			| Microsoft 1 Microsoft Way                    |
+			+----------------------------------------------+
+
+	4) Combine text string from query with defined seperator.  
+
+		mysql> SELECT CONCAT_WS(',',supplier_name,supplier_address);
+			+---------------------------------------------------+
+			| Concat_WS(',',supplier_name,supplier_address) |
+			+---------------------------------------------------+
+			| Microsoft,1 Microsoft Way                         |
+			+---------------------------------------------------+ 
+
+	5) Remove extra spaces on right side if text string
+
+	 	mysql> SELECT RTRIM('barbar   ');
+                -> 'barbar'
+
+
+	6) Remove left space on the right side of text string
+		
+		mysql> SELECT LTRIM('  barbar');
+        	-> 'barbar'
+
+
+==============================
+Date Time manipulation ( go back and find expression order, type in relavent info)
+* source https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_timediff
+
+
+INTERVALS : (microseconds), SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, or YEAR.
+
+
+Modifying Time:
+
+
+	1) TIMESTAMPADD(), Add an interval to a datetime expression, 
+	Returns : The combined interval and datetime expression.  
+		
+		TIMESTAMPADD(unit,interval,datetime_expr)
+
+		mysql> SELECT TIMESTAMPADD(MINUTE,1,'2003-01-02');
+        	-> '2003-01-02 00:01:00'
+		mysql> SELECT TIMESTAMPADD(WEEK,1,'2003-01-02');
+        	-> '2003-01-09'
+
+
+
+	2) TIMESTAMPDIFF(), Subtract an interval from a datetime expression,  	
+	Returns :  Returns datetime_expr2 - datetime_expr1 as an Interger not a date-time form.  Datetime can be added to Date if a time interval is used.
+
+		TIMESTAMPDIFF(unit,datetime_expr1,datetime_expr2)
+	
+		mysql> SELECT TIMESTAMPDIFF(MONTH,'2003-02-01','2003-05-01');
+        	-> 3
+		mysql> SELECT TIMESTAMPDIFF(YEAR,'2002-05-01','2001-01-01');
+        	-> -1
+		mysql> SELECT TIMESTAMPDIFF(MINUTE,'2003-02-01','2003-05-01 12:05:55');
+        	-> 128885
+
+				
+	3) ADDTIME()
+	Returns :  adds expr2 to expr1 and returns the result.  Used to add pure Time expression to a Date and Time expression.
+
+		mysql> SELECT ADDTIME('2007-12-31 23:59:59.999999', '1 1:1:1.000002');
+       		-> '2008-01-02 01:01:01.000001'
+		mysql> SELECT ADDTIME('01:00:00.999999', '02:00:00.999998');
+        	-> '03:00:01.999997'
+
+
+	4) TIMEDIFF()
+	Returns : returns expr1 - expr2 expressed as a time value.  Both Values must be matching either as both time, or Date and time.
+
+
+		mysql> SELECT TIMEDIFF('2000:01:01 00:00:00', 2000:01:01 00:00:00.000001');
+        	-> '-00:00:00.000001'
+		mysql> SELECT TIMEDIFF('2008-12-31 23:59:59.000001','2008-12-30 01:01:01.000002');
+        	-> '46:58:57.999999'
+
+
+	5) ADDDATE(date,INTERVAL expr unit)/ADDDATE(expr,days)
+	Returns : Returns a date time espression after either adding an Interval to a date expression, or a INTERGER of days
+
+		mysql> SELECT DATE_ADD('2008-01-02', INTERVAL 31 DAY);
+        	-> '2008-02-02'
+	
+		same as		
+
+		mysql> SELECT ADDDATE('2008-01-02', INTERVAL 31 DAY);
+        	-> '2008-02-02'
+
+
+		Permutation using day interger instead of intervals 	
+
+		mysql> SELECT ADDDATE('2008-01-02', 31);
+        	-> '2008-02-02'
+
+
+	6) SUBDATE(date,INTERVAL expr unit)/ DATE_SUB(expr,days)
+	Returns : Returns a date time espression after either subtracting an Interval from a date expression, or a INTERGER of days
+
+		mysql> SELECT DATE_SUB('2008-01-02', INTERVAL 31 DAY);
+        	-> '2007-12-02'
+		mysql> SELECT SUBDATE('2008-01-02', INTERVAL 31 DAY);
+        	-> '2007-12-02'
+
+		Permutation using day interger instead of intervals 	
+
+		mysql> SELECT SUBDATE('2008-01-02 12:00:00', 31);
+        	-> '2007-12-02 12:00:00'
+
+
+
+Time now:
+
+	1) TIMESTAMP(expr), TIMESTAMP(expr1,expr2)
+	Returns :  1 value, returns the date or datetime expression expr as a datetime value.
+		   2 values, adds the time expression expr2 to the date or datetime expression expr1.  Returns Datetime not an Interger
+
+
+		mysql> SELECT TIMESTAMP('2003-12-31');
+        	-> '2003-12-31 00:00:00'
+		mysql> SELECT TIMESTAMP('2003-12-31 12:00:00','12:00:00');
+        	-> '2004-01-01 00:00:00'
+
+
+	2) NOW()
+	Returns : Returns the current date and time as a value in 'YYYY-MM-DD HH:MM:SS' or YYYYMMDDHHMMSS.uuuuuu format
+
+		string constant:
+		mysql> SELECT NOW();
+        	-> '2007-12-15 23:50:26'
+		
+		numeric constant:
+		mysql> SELECT NOW() + 0;
+        	-> 20071215235026.000000
+
+
+
+
+
+Converting Time:
+
+
+	1)DATE_FORMAT(date, %specifiers)
+	Returns :  Formats the date value according to the format string.  Many variations available. 
+
+ 		mysql> SELECT DATE_FORMAT('2009-10-04 22:23:00', '%W %M %Y');
+		-> 'Sunday October 2009'
+
+	2)GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
+	Returns :  Returns a format string, converts either a date, time, or datetime, into the regional format such as month day year for USA or
+		   year month day for ISO
+
+		ref table:
+		----------
+		GET_FORMAT(DATE,'USA')	'%m.%d.%Y'
+		GET_FORMAT(DATE,'JIS')	'%Y-%m-%d'
+		GET_FORMAT(DATE,'ISO')	'%Y-%m-%d'
+		GET_FORMAT(DATE,'EUR')	'%d.%m.%Y'
+
+
+	3) STR_TO_DATE()
+	Returns : Converts a string to date.  Inputs to function composed of two parts, string date, and %specifier that define what order the string is.
+		  for example, %d day, %m month %y year, for the days, 01, months, 05, year 2013.
+ 
+		mysql> SELECT STR_TO_DATE('01,5,2013','%d,%m,%Y');
+        	-> '2013-05-01'
+
+		formates that dont match return null:
+		mysql> SELECT STR_TO_DATE('a09:30:17','%h:%i:%s');
+        	-> NULL
+
+		unspecified parts return zero:
+		mysql> SELECT STR_TO_DATE('9','%m');
+        	-> '0000-09-00'
+
+	4) MAKEDATE(year,dayofyear)
+	Returns : A date, a given year and day-of-year values. dayofyear must be greater than 0 or the result is NULL.
+
+		mysql> SELECT MAKEDATE(2011,31), MAKEDATE(2011,32);
+        	-> '2011-01-31', '2011-02-01'
+		mysql> SELECT MAKEDATE(2011,365), MAKEDATE(2014,365);
+        	-> '2011-12-31', '2014-12-31'
+		mysql> SELECT MAKEDATE(2011,0);
+        	-> NULL
+
+	5) MAKETIME(hour,minute,second)
+	Returns : a time value calculated from the hour, minute, and second arguments.
+	
+		mysql> SELECT MAKETIME(12,15,30);
+        	-> '12:15:30'
+
+
+---------------------------
+Example of inserting time:
+
+	INSERT INTO orders (order_item, order_date, order_delivery) 
+	VALUES ('iPhone 8Gb', NOW(), DATE_ADD(NOW(), INTERVAL 14 DAY));
+
+	mysql> SELECT * FROM orders;
+	+----------+------------+---------------------+----------------+
+	| order_no | order_item | order_date          | order_delivery |
+	+----------+------------+---------------------+----------------+
+	|        1 | iPhone 8Gb | 2007-10-23 11:37:55 | 2007-11-06     |
+	+----------+------------+---------------------+----------------+
+
+
+
+Example of changing time: 
+
+
+   	UPDATE orders
+	SET order_date = '2007-10-23 11:37:55'
+	WHERE order_no = 1;
+
+
+Example of searching time: 
+
+	mysql> SELECT * FROM orders WHERE order_delivery BETWEEN '2007-12-01' AND '2008-01-01';
+	+----------+----------------+---------------------+----------------+
+	| order_no | order_item     | order_date          | order_delivery |
+	+----------+----------------+---------------------+----------------+
+	|        2 | ipod Touch 4Gb | 2007-10-23 11:51:09 | 2007-12-23     |
+	+----------+----------------+---------------------+----------------+
+
+
+
+
+
+
+

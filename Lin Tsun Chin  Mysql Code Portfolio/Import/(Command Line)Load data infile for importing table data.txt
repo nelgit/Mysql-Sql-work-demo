@@ -1,0 +1,24 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd
+
+#To import a tab seperated file
+shell> mysql -u root -p -e " USE dbname; LOAD DATA LOCAL INFILE '/path/Import_File' INTO TABLE your_table LINES TERMINATED BY '\n'"
+
+
+#To import a comma seperated file
+shell> mysql -u root -p -e " USE dbname; LOAD DATA LOCAL INFILE '/path/Import_File' INTO TABLE your_table FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'"
+
+
+# This uses the shell>, or cmd, command line to import into mysql database dbname, into the table specified your_table. 
+# The contents of a file Import_File is imported thru the use of the mysql command LOAD DATA INFILE.
+# LOCAL specifies that the the file to be import in on the client machine and not the host machine.
+# REPLACE and IGNORE keywords control handling of input rows that duplicate existing rows on unique key values:
+# If you specify REPLACE, input rows replace existing rows. 
+# If you specify IGNORE, rows that duplicate an existing row on a unique key value are discarded. 
+# * If you do not specify either option, the behavior depends on whether the LOCAL keyword is specified. 
+# Without LOCAL, an error occurs when a duplicate key value is found, and the rest of the text file is ignored. 
+# With LOCAL, the default behavior is the same as if IGNORE is specified. 
+
+

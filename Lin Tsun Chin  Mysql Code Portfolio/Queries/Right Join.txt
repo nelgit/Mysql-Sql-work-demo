@@ -1,0 +1,32 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+
+Right Join: RIGHT JOIN returns all rows from the right table (table2), 
+			with the matching rows in the left table (table1). The result is NULL in the left side when there is no match.
+
+	Example: Joining Tables using right join to find out if an actor participated in a given movie.
+				
+				Select release_year, title, last_name, first_name
+				From film_actor
+				Right join actor_info on film_actor.actor_id	= actor_info.actor_id  										  
+				Right join film on film_actor.film_id = film.film_id
+				Where title = "AFRICAN EGG"
+				Group BY release_year, title, last_name, first_name
+				Limit 0, 50;
+		
+					Result
+					
+						+--------------+-------------+-----------+------------+
+						| release_year | title       | last_name | first_name |
+						+--------------+-------------+-----------+------------+
+						|         2006 | AFRICAN EGG | CARREY    | MATTHEW    |
+						|         2006 | AFRICAN EGG | LEIGH     | MATTHEW    |
+						|         2006 | AFRICAN EGG | PHOENIX   | GARY       |
+						|         2006 | AFRICAN EGG | TAUTOU    | DUSTIN     |
+						|         2006 | AFRICAN EGG | TEMPLE    | THORA      |
+						+--------------+-------------+-----------+------------+
+						5 rows in set (0.76 sec)
+				
+			

@@ -1,0 +1,18 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+#show procedure definiton ( and show what values it takes in)
+	SHOW CREATE PROCEDURE <name>
+
+		#Returns the text of a previously defined stored procedure that was created using the CREATE PROCEDURE statement.
+		#Swap PROCEDURE for FUNCTION for a stored function.
+
+#Pass in values to stored procedure
+
+call List_Stored_Procedure('sakila')  #<--- single quotes
+
+http://sqlblog.com/blogs/paul_white/archive/2012/08/15/temporary-tables-in-stored-procedures.aspx
+
+http://dba.stackexchange.com/questions/54872/stored-procedure-performance-using-temporary-tables
+
+http://dba.stackexchange.com/questions/57971/how-long-will-a-temporary-memory-table-persist-if-i-dont-drop-it-mysql

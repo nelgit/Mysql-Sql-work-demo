@@ -1,0 +1,47 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+1) How to convert Excel file to be used with MySQL
+
+	1) Using Excel, save file as csv format. Import csv file into mysql using load data Infile.
+
+
+	2) Alternatively, use software such as : MySql for Excel
+	http://www.mysql.com/why-mysql/windows/excel/
+
+
+
+2) How to Output data from MySQL so that it may be used with Excel 
+
+	1) Output as a data to a file format that can to be loaded into Excel.  In this example, comma seperated and tab serperated are created.
+
+		#COMMA SEPERATED OUTPUT
+		mysql -u user -p dbname
+		
+			SELECT * INTO OUTFILE exported_table_data 
+			FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  
+			LINES TERMINATED BY '\n'
+			FROM selected_table;
+	
+
+		#TAB SEPERATED OUTPUT
+		mysql -u user -p dbname
+	
+			SELECT * INTO OUTFILE exported_table_data 
+			FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"'  
+			LINES TERMINATED BY '\n'
+			FROM selected_table;
+
+	2) It is possible to create a table seperated output that can be loaded by excel created by using mysqldump
+
+		#TAB SEPERATED OUTPUT
+		mysqldump
+
+
+
+
+
+
+
+
+

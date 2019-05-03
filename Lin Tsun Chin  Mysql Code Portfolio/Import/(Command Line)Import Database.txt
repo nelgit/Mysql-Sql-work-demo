@@ -1,0 +1,13 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd
+
+shell> mysql -u root -p importing_db < /path/db_backup.sql
+
+# This uses the shell>, or cmd, command line to import into mysql database importing_db
+# a previously saved file file or backup file db_backup.sql. 
+# In this case it is assumed to be a database backup file, generated from mysqldump.  
+# In the case that the you wish to import into a db_backup.sql into a newdatabase 
+# you should fist create a database within the mysql host.
+#     mysql -u user -p -e"create database new_db"

@@ -1,0 +1,74 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+
+Left Join: Query data from two or more database tables.  Display all table 1 data, and only data with matching join logic table 2...(etc)  
+
+	Example:Joining multiple tables using left join to find the name of an actor, what movies they were included in,
+			and the years each movie was released.
+			
+				Select last_name, first_name, title, release_year
+				From film_actor
+				left join actor_info on film_actor.actor_id	= actor_info.actor_id  										  
+				left join film on film_actor.film_id = film.film_id
+				Group BY last_name, first_name, title
+				Limit 0, 50;
+					 
+					 Result
+					
+						+-----------+------------+-----------------------+--------------+
+						| last_name | first_name | title                 | release_year |
+						+-----------+------------+-----------------------+--------------+
+						| AKROYD    | CHRISTIAN  | BACKLASH UNDEFEATED   |         2006 |
+						| AKROYD    | CHRISTIAN  | BETRAYED REAR         |         2006 |
+						| AKROYD    | CHRISTIAN  | CAPER MOTIONS         |         2006 |
+						| AKROYD    | CHRISTIAN  | CATCH AMISTAD         |         2006 |
+						| AKROYD    | CHRISTIAN  | CHANCE RESURRECTION   |         2006 |
+						| AKROYD    | CHRISTIAN  | CONFUSED CANDLES      |         2006 |
+						| AKROYD    | CHRISTIAN  | CUPBOARD SINNERS      |         2006 |
+						| AKROYD    | CHRISTIAN  | DIVIDE MONSTER        |         2006 |
+						| AKROYD    | CHRISTIAN  | DOOM DANCING          |         2006 |
+						| AKROYD    | CHRISTIAN  | DOORS PRESIDENT       |         2006 |
+						| AKROYD    | CHRISTIAN  | DRIVER ANNIE          |         2006 |
+						| AKROYD    | CHRISTIAN  | FEATHERS METAL        |         2006 |
+						| AKROYD    | CHRISTIAN  | FIRE WOLVES           |         2006 |
+						| AKROYD    | CHRISTIAN  | HILLS NEIGHBORS       |         2006 |
+						| AKROYD    | CHRISTIAN  | HOME PITY             |         2006 |
+						| AKROYD    | CHRISTIAN  | INNOCENT USUAL        |         2006 |
+						| AKROYD    | CHRISTIAN  | JAWBREAKER BROOKLYN   |         2006 |
+						| AKROYD    | CHRISTIAN  | LUKE MUMMY            |         2006 |
+						| AKROYD    | CHRISTIAN  | MAGNOLIA FORRESTER    |         2006 |
+						| AKROYD    | CHRISTIAN  | MAIDEN HOME           |         2006 |
+						| AKROYD    | CHRISTIAN  | MAKER GABLES          |         2006 |
+						| AKROYD    | CHRISTIAN  | MILLION ACE           |         2006 |
+						| AKROYD    | CHRISTIAN  | MOURNING PURPLE       |         2006 |
+						| AKROYD    | CHRISTIAN  | NUTS TIES             |         2006 |
+						| AKROYD    | CHRISTIAN  | OKLAHOMA JUMANJI      |         2006 |
+						| AKROYD    | CHRISTIAN  | OPERATION OPERATION   |         2006 |
+						| AKROYD    | CHRISTIAN  | PRINCESS GIANT        |         2006 |
+						| AKROYD    | CHRISTIAN  | RESERVOIR ADAPTATION  |         2006 |
+						| AKROYD    | CHRISTIAN  | SABRINA MIDNIGHT      |         2006 |
+						| AKROYD    | CHRISTIAN  | SINNERS ATLANTIS      |         2006 |
+						| AKROYD    | CHRISTIAN  | STREETCAR INTENTIONS  |         2006 |
+						| AKROYD    | CHRISTIAN  | SUBMARINE BED         |         2006 |
+						| AKROYD    | DEBBIE     | APOLLO TEEN           |         2006 |
+						| AKROYD    | DEBBIE     | CLUB GRAFFITI         |         2006 |
+						| AKROYD    | DEBBIE     | FAMILY SWEET          |         2006 |
+						| AKROYD    | DEBBIE     | FLINTSTONES HAPPINESS |         2006 |
+						| AKROYD    | DEBBIE     | GALAXY SWEETHEARTS    |         2006 |
+						| AKROYD    | DEBBIE     | GLORY TRACY           |         2006 |
+						| AKROYD    | DEBBIE     | HALF OUTFIELD         |         2006 |
+						| AKROYD    | DEBBIE     | HEDWIG ALTER          |         2006 |
+						| AKROYD    | DEBBIE     | HOLIDAY GAMES         |         2006 |
+						| AKROYD    | DEBBIE     | HOUSE DYNAMITE        |         2006 |
+						| AKROYD    | DEBBIE     | MONEY HAROLD          |         2006 |
+						| AKROYD    | DEBBIE     | OPPOSITE NECKLACE     |         2006 |
+						| AKROYD    | DEBBIE     | PEAK FOREVER          |         2006 |
+						| AKROYD    | DEBBIE     | PIANIST OUTFIELD      |         2006 |
+						| AKROYD    | DEBBIE     | PILOT HOOSIERS        |         2006 |
+						| AKROYD    | DEBBIE     | PRESIDENT BANG        |         2006 |
+						| AKROYD    | DEBBIE     | RANDOM GO             |         2006 |
+						| AKROYD    | DEBBIE     | REDEMPTION COMFORTS   |         2006 |
+						+-----------+------------+-----------------------+--------------+
+						50 rows in set (0.76 sec)

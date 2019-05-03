@@ -1,0 +1,13 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+[client]
+# The following password will be sent to all standard MySQL clients
+user=root
+password=password
+database=sakila
+
+
+[mysql]
+no-auto-rehash
+connect_timeout=2

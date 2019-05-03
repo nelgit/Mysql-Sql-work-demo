@@ -1,0 +1,12 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd,
+
+shell> mysql -u username -p -e "USE dbname; SELECT * FROM table_name" >> /path/myfile.txt
+
+# This uses the shell>, or cmd, command line to execute a query from mysql and 
+# append the results of the query to file myfile. In the above example it takes the
+# whole table specified by table_name, from database dbname.
+
+

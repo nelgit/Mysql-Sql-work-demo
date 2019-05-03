@@ -1,0 +1,34 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+
+Inner Join: matches rows in one table with rows in other tables and allows you to query rows that contain columns from both tables.
+
+	Example: Joining tables, actor and actor_info, to find the common actors included in each table.
+			
+			Select actor.last_name, actor.first_name
+			From  actor
+			Inner JOIN actor_info ON actor.last_name = actor_info.last_name AND actor.first_name = actor_info.first_name
+			Limit 0, 10;
+					 
+				Result
+					
+					+--------------+------------+
+					| last_name    | first_name |
+					+--------------+------------+
+					| GUINESS      | PENELOPE   |
+					| WAHLBERG     | NICK       |
+					| CHASE        | ED         |
+					| DAVIS        | JENNIFER   |
+					| LOLLOBRIGIDA | JOHNNY     |
+					| NICHOLSON    | BETTE      |
+					| MOSTEL       | GRACE      |
+					| JOHANSSON    | MATTHEW    |
+					| SWANK        | JOE        |
+					| GABLE        | CHRISTIAN  |
+					+--------------+------------+
+					10 rows in set (0.77 sec)
+
+
+

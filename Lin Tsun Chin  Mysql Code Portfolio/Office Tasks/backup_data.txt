@@ -1,0 +1,104 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+ 
+Database backup Solutions:	
+1)Export DB using mysql dump.
+2)Export table and append to file.
+3)Export table using INTO OUTFILE.
+4)Pipe to other database.
+
+
+1)
+#(Command Line)Export full DB using mysql dump.txt
+# Command Line: shell>,cmd
+
+shell> mysqldump -u username -p db_name --no-create-info > /path/backup_db.sql  
+
+# This uses the shell>, or cmd, command line to invoke mysqldump.  
+# It Takes the contents of database db_name and 
+# creates as backup file backup_db with its copied contents. 
+# --no-create-info : this prevents mysqldump from including DROP TABLE and CREATE TABLE statements in its output 
+# which will wipe your table when importing. 
+
+
+2)
+#(Command Line)Export table and append to file.txt
+# Command Line: shell>, or cmd,
+
+shell> mysql -u username -p -e "USE dbname; SELECT * FROM table_name" >> /path/myfile.txt
+
+# This uses the shell>, or cmd, command line to execute a query from mysql and 
+# append the results of the query to file myfile. In the above example it takes the
+# whole table specified by table_name, from database dbname.
+
+
+
+3)
+# (mysql client)export table columes using INTO OUTFILE .txt
+# Within Mysql> client 
+
+shell> mysql -u user -p dbname;
+mysql> SELECT * INTO OUTFILE exported_table_data FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n' FROM selected_table;
+
+# This uses the mysql> client  
+# It specifies the database db_name thru the USE statement. 
+# It selects ( * all columes) within the table specified as selected_table 
+# and saves it to outfile exported_table_data.  
+# check to see what file path has secure_file_priv when running to make sure you can write.
+
+	#SPECIFIC SELECTION OUTPUT
+	
+	mysql -u user -p dbname
+
+		SELECT COLUME1,COLUME2,COLUME3(...) INTO OUTFILE exported_table_data 
+		FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  
+		LINES TERMINATED BY '\n'
+		FROM selected_table;
+	
+
+
+	#COMMA SEPERATED OUTPUT
+	
+	mysql -u user -p dbname
+		
+		SELECT * INTO OUTFILE exported_table_data 
+		FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  
+		LINES TERMINATED BY '\n'
+		FROM selected_table;
+	
+
+	#TAB SEPERATED OUTPUT
+
+	mysql -u user -p dbname
+	
+		SELECT * INTO OUTFILE exported_table_data 
+		FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"'  
+		LINES TERMINATED BY '\n'
+		FROM selected_table;
+
+# If you want execute from the command line simply use mysql -u user -p dbname -e"<MySQL CODE CHUNK HERE WITHOUT THE < and > >" 
+
+
+
+# Interacting With db and tables, datatransfer.txt
+4) pipe from one database to other database
+
+	Pipe entire contents
+
+		1) shell>mysqldump -u username –p database_name|mysql -u username -p new_database
+
+			# |  This pipes the output of the left side, mysqldump, database_name into 
+			# the input on the right side, new_database
+
+	Pipe selected tables
+
+		2) shell>mysqldump -u username –p database_name table_name(...)|mysql -u username -p new_database
+
+			# same process, only further defining the left side as database_name table_name in mysqldump.
+
+	Pipe all tables but exclude selected
+
+		3) shell>mysqldump -u user -p db_name --ignore-table=db_name.Excluded_tbl(...)|mysql -u username -p new_database
+			
+			# same process, only this time --ignore is used to exlude Excluded_tbl in mysqldump.
+

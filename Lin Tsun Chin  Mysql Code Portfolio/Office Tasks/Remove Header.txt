@@ -1,0 +1,44 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+For use transfering data.
+Stripping the header would be used with when used with INTO OUTFILE to create a pure data file to import into something like excel or another table. 
+
+Example: 
+
+	mysql -u user -p testdb -sNe"
+	select * INTO OUTFILE exported_table_data FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'
+	FROM selected_table"
+
+-N option:
+
+	invoke mysql with the -N (the alias for -N is --skip-column-names) option:
+
+	mysql -N ...
+	use testdb;
+	select * from names;
+
+	+------+-------+
+	|    1 | pete  |
+	|    2 | john  |
+	|    3 | mike  |
+	+------+-------+
+
+-s option:
+
+	To remove the grid (the vertical and horizontal lines) around the results use -s (--silent). Columns are separated with a TAB character.
+
+	mysql -s ...
+	use testdb;
+	select * from names;
+
+	id  name
+	1   pete	
+	2   john
+	3   mike
+	
+	
+You can also fake it like this:
+
+	select column1 as '', column2 as '' from some_table;
+

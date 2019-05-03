@@ -1,0 +1,49 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Within Mysql> client 
+
+shell> mysql -u user -p dbname;
+mysql> SELECT * INTO OUTFILE exported_table_data FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n' FROM selected_table;
+
+# This uses the mysql> client  
+# It specifies the database db_name thru the USE statement. 
+# It selects ( * all columes) within the table specified as selected_table 
+# and saves it to outfile exported_table_data.  
+# check to see what file path has secure_file_priv when running to make sure you can write.
+
+	#SPECIFIC SELECTION OUTPUT
+	
+	mysql -u user -p dbname
+
+		SELECT COLUME1,COLUME2,COLUME3(...) INTO OUTFILE exported_table_data 
+		FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  
+		LINES TERMINATED BY '\n'
+		FROM selected_table;
+	
+
+
+	#COMMA SEPERATED OUTPUT
+	
+	mysql -u user -p dbname
+		
+		SELECT * INTO OUTFILE exported_table_data 
+		FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  
+		LINES TERMINATED BY '\n'
+		FROM selected_table;
+	
+
+	#TAB SEPERATED OUTPUT
+
+	mysql -u user -p dbname
+	
+		SELECT * INTO OUTFILE exported_table_data 
+		FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"'  
+		LINES TERMINATED BY '\n'
+		FROM selected_table;
+
+# If you want execute from the command line simply use mysql -u user -p dbname -e"<MySQL CODE CHUNK HERE WITHOUT THE < and > >" 
+	
+
+
+

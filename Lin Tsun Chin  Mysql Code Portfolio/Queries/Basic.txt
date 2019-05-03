@@ -1,0 +1,98 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+
+Basic Query:  Used to retrieve data from a database.
+
+	Non aggregate:
+
+		Select
+		From
+		Where 
+		Order By
+		Limit
+
+			Example: 	Find first name, last name, and email, of all staff, where staff_id is less then 10, 
+						limit result to 10.
+			
+						Select first_name, last_name, email
+						From staff
+						Where staff_id < 10
+						Order By last_name ASC
+						Limit 0,10
+						
+						+------------+-----------+------------------------------+
+						| first_name | last_name | email                        |
+						+------------+-----------+------------------------------+
+						| Mike       | Hillyer   | Mike.Hillyer@sakilastaff.com |
+						| Jon        | Stephens  | Jon.Stephens@sakilastaff.com |
+						+------------+-----------+------------------------------+
+						2 rows in set (0.01 sec)
+		
+	Aggregate:  select rating, title fromm film list group by rating, find out why giving aggregaete error only 5 list
+
+		Select
+		From
+		Group By
+		Having
+		Order By
+		Limit
+
+			Example:  Look thru all movie titles, for each rating, that have "conditions", from table film_list
+			
+					Select rating, title
+					From film_list
+					Group By rating, title
+					Having price = "2.99"
+					Order By title ASC
+					
+					First 10 rows:
+					
+					+--------+-----------------------------+-------+
+					| rating | title                       | price |
+					+--------+-----------------------------+-------+
+					| G      | AFFAIR PREJUDICE            |  2.99 |
+					| G      | AFRICAN EGG                 |  2.99 |
+					| G      | AMISTAD MIDSUMMER           |  2.99 |
+					| G      | ANGELS LIFE                 |  2.99 |
+					| G      | ATLANTIS CAUSE              |  2.99 |
+					| G      | BAKED CLEOPATRA             |  2.99 |
+					| G      | BARBARELLA STREETCAR        |  2.99 |
+					| G      | BAREFOOT MANCHURIAN         |  2.99 |
+					| G      | BEACH HEARTBREAKERS         |  2.99 |
+					| G      | BLANKET BEVERLY             |  2.99 |
+					
+					Final result 323 rows.
+					
+			Example:  Use of aggregate function:  Count how many movies fall under each ratings catagory.
+			
+					Select rating, count(title)as "Number of Titles"
+					From film_list
+					Group By rating
+		
+					+--------+------------------+
+					| rating | number of titles |
+					+--------+------------------+
+					| G      |              177 |
+					| PG     |              194 |
+					| PG-13  |              223 |
+					| R      |              193 |
+					| NC-17  |              210 |
+					+--------+------------------+
+					5 rows in set (0.08 sec)
+			
+					
+					
+
+Definitions:
+		
+Select:		You specifiy which column information you want here, can be single or mulitple.
+Distinct:	Optional, used after select statement (select distinct ...) in order to filter repeated values out in results.
+From:		The table including the specified columns is identified here.
+Where:		Additional conditions used to narrow result are entered here.  (non aggregate)
+Having:		Additional conditions used to narrow result are entered here.  (aggregate)
+Group By:	Used to group the result-set by one or more columns. (aggregate)
+Order By:	Organizer the output of the query alphabetically or numerically depending on datatype.  ASC|DESC
+Limit:		Limits the result, offset(start on row...), rowcount(how many rows should I return).
+

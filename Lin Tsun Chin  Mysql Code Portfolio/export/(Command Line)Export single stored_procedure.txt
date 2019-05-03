@@ -1,0 +1,33 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd
+
+shell> mysql -u user -p --skip-column-names --raw --batch dbname -e "SELECT CONCAT('DELIMITER$$ \n\n CREATE PROCEDURE `', specific_name, '`(', param_list, ') AS \n', body_utf8,' $$ \n\n DELIMITER;\n ') AS `stmt` FROM `mysql`.`proc` WHERE `db` = 'dbname' AND specific_name = 'Selected_Procedure_To_Export';"> /path/Exported_Procedure.txt
+
+# This uses the shell>, or cmd, command line to invoke mysql. 
+# It creates a procedure from specific name defined as Selected_Procedure_To_Export.   
+# At runtime Selected_Procedire_to_Export should be replaced with the procedure name you want to export from your database.
+# The database is defined by dbname
+# The output file is named Exported_Procedure.
+
+
+
+###logic made easier to read (but wont run!)
+#
+#mysql -u user -p --skip-column-names --raw --batch dbname 
+#-e "
+#
+#	SELECT CONCAT('DELIMITER$$ \n\n CREATE PROCEDURE `', specific_name, '`(', param_list, ') AS \n', body_utf8,' $$ \n\n DELIMITER;\n ') AS `stmt` 
+#	FROM `mysql`.`proc` 
+#	WHERE `db` = 'dbname' AND specific_name = 'Selected_Procedure_To_Export';
+#
+#"> Exported_Procedure
+
+
+
+
+		
+
+
+

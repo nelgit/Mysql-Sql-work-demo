@@ -1,0 +1,12 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>, or cmd
+
+shell> mysqldump -u username -p dbname --routines --no-data --no-create-db --skip-triggers --skip-opt > /path/backup_sp.sql
+
+# This uses the shell>, or cmd, command line to invoke mysqldump.
+# It Takes the contents(stored procedures) of database db_name and 
+# creates as backup file backup_sp with its copied contents
+
+

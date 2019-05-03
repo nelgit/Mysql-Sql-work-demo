@@ -1,0 +1,12 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+# Command Line: shell>,cmd
+
+shell> mysqldump -u username -p db_name --no-create-info > /path/backup_db.sql  
+
+# This uses the shell>, or cmd, command line to invoke mysqldump.  
+# It Takes the contents of database db_name and 
+# creates as backup file backup_db with its copied contents. 
+# --no-create-info : this prevents mysqldump from including DROP TABLE and CREATE TABLE statements in its output 
+# which will wipe your table when importing. 

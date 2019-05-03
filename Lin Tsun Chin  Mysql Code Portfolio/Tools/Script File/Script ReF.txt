@@ -1,0 +1,156 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Definitions:
+
+	Mysql script (Run commands from file)
+	
+			Run example: shell> mysql -h host -u user -p < E:/my_batch_files/my_script_files/script_file_example.sql
+	
+				[Inside file]:  # comment
+								Select @some_thing 
+								FROM @some_table
+								WHERE @some_other_thing > @passed_in_value
+								# comment
+								
+	Mysql batch-file (*multiple* Run commands from file, scripts from file)
+		
+			Run example:  shell> mysql -h host -u user -p < E:/my_batch_files/batch_file_example.sql
+
+				
+				[Inside file]:  # Do something using select_some_stuff script file.
+									
+									source C:/select_some_stuff.sql;
+								
+								# Now do something else using dump_stuff_to_file script file.
+									
+									source C:/dump_stuff_to_file.sql;
+								
+								# Now finish up by doing this using finish_up script file.
+									
+									source C:/finish_up.sql;
+=================================================================================================
+			
+To set variables in script:
+	
+		-e "Set @your_variable"
+		
+Run script file from mysql:
+
+		mysql> source filename;
+		mysql> \. filename
+		
+Run script file from command prompt:
+	
+		shell> mysql -h host -u user -p < batch-file //Problem with shell // use cmd
+
+			If you need to specify connection parameters on the command line
+	
+		shell> mysql < batch-file  //Problem with shell // use cmd
+		
+			Plain jane, format to run it from cmd
+		
+		shell> mysql -e "source batch-file"
+		
+			If you are running mysql under Windows and have some special characters in the file that cause problems
+
+		shell> mysql --force -e "source batch-file"
+
+			If you want the script to continue even if some of the statements in it produce errors, use the --force command-line option.
+
+		shell> mysql < batch-file | more
+			
+			If you have a query that produces a lot of output, output through a pager rather than scroll off the top of your screen.
+
+		shell> mysql < batch-file > mysql.out
+
+			Catch the output in a file for further processing
+
+		shell> mysql db_name < script.sql > mysql.out
+
+			Execute SQL statements in a script file, also output it 
+			
+			
+			
+
+Tips/tricks 
+  
+For interactive output format in batch mode, use mysql -t
+			. 			
+To echo to the output the statements that are executed, use mysql -v. 
+			  
+  
+Find Script runtime:
+
+	How to measure total batch running time for several SQLs Insert this code snippet:
+
+	# at start of your script file
+	SET @start=UNIX_TIMESTAMP();
+
+	# at bottom of your script file
+	SET
+	@s=@seconds:=UNIX_TIMESTAMP()-@start,
+	@d=TRUNCATE(@s/86400,0), @s=MOD(@s,86400),
+	@h=TRUNCATE(@s/3600,0), @s=MOD(@s,3600),
+	@m=TRUNCATE(@s/60,0), @s=MOD(@s,60),
+	@day=IF(@d>0,CONCAT(@d,' day'),''),
+	@hour=IF(@d+@h>0,CONCAT(IF(@d>0,LPAD(@h,2,'0'),@h),' hour'),''),
+	@min=IF(@d+@h+@m>0,CONCAT(IF(@d+@h>0,LPAD(@m,2,'0'),@m),' min.'),''),
+	@sec=CONCAT(IF(@d+@h+@m>0,LPAD(@s,2,'0'),@s),' sec.');
+
+	SELECT
+	CONCAT(@seconds,' sec.') AS seconds,
+	CONCAT_WS(' ',@day,@hour,@min,@sec) AS elapsed;
+
+	
+Execute series of Scripts in a Folder  (Using .BAT File in command line windows)  
+	
+	Ref:
+	
+	(type into command prompt) FOR HELP
+	http://commandwindows.com/command1.htm
+	https://ss64.com/nt/for_cmd.html
+	https://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/for.mspx?mfr=true
+	
+	http://stackoverflow.com/questions/21603203/batch-loop-calls-to-mysql-not-working
+
+		@echo off
+
+		:: Loops through the folder
+		for /r C:\path\ %%i in (*.sql) do (
+	
+		:: Shows the current filename
+		echo %%i
+
+		:: Calls MySQL giving it the filename to import  <--bad dont use insecure
+		C:\path\mysql -u root -ppassword < %%i
+
+		)
+
+		::* command line is buggy with commenting.  
+		:: ways of commenting & REM, and ::.  :is a lable
+		
+		:: do this instead
+		:: NOTES nn Password security  
+		:: -p cannot be used as you will have to enter the password in each loop iteration
+		:: for better security instead of hard coding the password into .bat file
+		:: Do this instead.
+				:: Store password in an options file.
+				:: Run Bat to use options file for password shown as above.
+				:: Example of what is contained within options file sample.cnf
+				
+				::	[client]
+				::	# The following password will be sent to all standard MySQL clients
+				::  user=root
+				::	password=password
+
+				::	[mysql]
+				::	no-auto-rehash
+				::	connect_timeout=2
+
+		:: Other ref
+		:: http://stackoverflow.com/questions/16299603/mysql-utilities-my-cnf-option-file
+		:: http://stackoverflow.com/questions/17827340/protect-the-password-when-using-mysql-in-an-unattended-bash-script
+		:: http://serverfault.com/questions/788718/mysql-rejects-login-attempts-when-password-is-stored-in-options-file
+		
+		

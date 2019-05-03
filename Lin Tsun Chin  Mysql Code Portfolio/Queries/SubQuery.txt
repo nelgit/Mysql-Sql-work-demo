@@ -1,0 +1,368 @@
+#Lin Tsun Chin
+#2017, Mysql Code Portfolio Examples
+
+Ref: sakila database: https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+
+Sub Query:  Used to aggregate in multiple stages,  Used to join aggregate results to output, used to filter results
+
+
+	Subquery In Select:  Select a return of (return of an aggregate) --> *Correlated subquerie
+						 * Other results such as return of conitional logic, select of another table
+						   possible, but due to returnin multiple results better to use joins.
+			
+				Select store, manager, total_sales, 
+					(
+					Select AVG (total_sales)
+					From sales_by_store
+					) AS average_total_sales
+				From sales_by_store;
+				
+					Result
+					
+						+---------------------+--------------+-------------+---------------------+
+						| store               | manager      | total_sales | average_total_sales |
+						+---------------------+--------------+-------------+---------------------+
+						| Woodridge,Australia | Jon Stephens |    33726.77 |        33703.280000 |
+						| Lethbridge,Canada   | Mike Hillyer |    33679.79 |        33703.280000 |
+						+---------------------+--------------+-------------+---------------------+
+						2 rows in set (0.36 sec)
+
+		
+	Subquery In From:	When subqueries are used in the FROM clause they act as a table 
+						that you can use to select columns and join to other tables.
+						
+						Example:
+	
+							Select last_name, first_name, X.title, X.release_year
+							From 
+								(
+								select title, release_year, film_id
+								from film
+								) as X	
+							right join film_actor on X.film_id = film_actor.film_id
+							left join actor_info on film_actor.actor_id = actor_info.actor_id
+							Group BY last_name, first_name, title
+							Limit 0, 20;
+							
+								Result
+	
+									+-----------+------------+---------------------+--------------+
+									| last_name | first_name | title               | release_year |
+									+-----------+------------+---------------------+--------------+
+									| AKROYD    | CHRISTIAN  | BACKLASH UNDEFEATED |         2006 |
+									| AKROYD    | CHRISTIAN  | BETRAYED REAR       |         2006 |
+									| AKROYD    | CHRISTIAN  | CAPER MOTIONS       |         2006 |
+									| AKROYD    | CHRISTIAN  | CATCH AMISTAD       |         2006 |
+									| AKROYD    | CHRISTIAN  | CHANCE RESURRECTION |         2006 |
+									| AKROYD    | CHRISTIAN  | CONFUSED CANDLES    |         2006 |
+									| AKROYD    | CHRISTIAN  | CUPBOARD SINNERS    |         2006 |
+									| AKROYD    | CHRISTIAN  | DIVIDE MONSTER      |         2006 |
+									| AKROYD    | CHRISTIAN  | DOOM DANCING        |         2006 |
+									| AKROYD    | CHRISTIAN  | DOORS PRESIDENT     |         2006 |
+									| AKROYD    | CHRISTIAN  | DRIVER ANNIE        |         2006 |
+									| AKROYD    | CHRISTIAN  | FEATHERS METAL      |         2006 |
+									| AKROYD    | CHRISTIAN  | FIRE WOLVES         |         2006 |
+									| AKROYD    | CHRISTIAN  | HILLS NEIGHBORS     |         2006 |
+									| AKROYD    | CHRISTIAN  | HOME PITY           |         2006 |
+									| AKROYD    | CHRISTIAN  | INNOCENT USUAL      |         2006 |
+									| AKROYD    | CHRISTIAN  | JAWBREAKER BROOKLYN |         2006 |
+									| AKROYD    | CHRISTIAN  | LUKE MUMMY          |         2006 |
+									| AKROYD    | CHRISTIAN  | MAGNOLIA FORRESTER  |         2006 |
+									| AKROYD    | CHRISTIAN  | MAIDEN HOME         |         2006 |
+									+-----------+------------+---------------------+--------------+
+									20 rows in set (0.77 sec)
+	
+							
+	Subquery in Where: 	conditional logic, subqueries used to narrow scope of search 
+						Multiple result subqueries, use IN 
+	
+		Example:	Find out all staff that only handle movie rentals
+		
+				SELECT name, country, address, city, 'zip code'
+				FROM staff_list
+				Where Exists ( Select 1 
+							   FROM rental 
+							   Where rental.staff_id = staff_list.id)
+		
+						Result:
+	
+							+--------------+-----------+----------------------+------------+----------+
+							| name         | country   | address              | city       | zip code |
+							+--------------+-----------+----------------------+------------+----------+
+							| Mike Hillyer | Canada    | 23 Workhaven Lane    | Lethbridge | zip code |
+							| Jon Stephens | Australia | 1411 Lillydale Drive | Woodridge  | zip code |
+							+--------------+-----------+----------------------+------------+----------+
+							2 rows in set (0.00 sec)
+					
+								
+	Subquery in insert: can be used to add values into a table from one or more other tables
+	
+		Example:  * JOIN would normally be used to save all the trouble for getting combined table data. 
+				  This is a demonstration for subquery in insert for creating a new table, from two tables, customer, and address,
+				  Using subquery in Insert.
+		
+					
+					Create table customer_address_combine like customer;
+					
+					Alter table customer_address_combine
+					Add column address varchar (50) after last_name;	
+			
+					Insert into customer_address_combine (customer_id, store_id, first_name, last_name, address, email, address_id, active, create_date, last_update)
+					(
+					Select customer_id, store_id, first_name, last_name, address.address, email, customer.address_id, active, create_date, customer.last_update
+					 From customer Left join address
+						on customer.address_id = address.address_id
+					);
+			
+					Select customer_id, store_id, first_name, last_name, address, email, address_id
+					from customer_address_combine
+					order by customer_id asc
+					Limit 0,20;
+			
+						Result
+	
++-------------+----------+------------+-----------+------------------------------------+-------------------------------------+------------+
+| customer_id | store_id | first_name | last_name | address                            | email                               | address_id |
++-------------+----------+------------+-----------+------------------------------------+-------------------------------------+------------+
+|           1 |        1 | MARY       | SMITH     | 1913 Hanoi Way                     | MARY.SMITH@sakilacustomer.org       |          5 |
+|           2 |        1 | PATRICIA   | JOHNSON   | 1121 Loja Avenue                   | PATRICIA.JOHNSON@sakilacustomer.org |          6 |
+|           3 |        1 | LINDA      | WILLIAMS  | 692 Joliet Street                  | LINDA.WILLIAMS@sakilacustomer.org   |          7 |
+|           4 |        2 | BARBARA    | JONES     | 1566 Inegl Manor                   | BARBARA.JONES@sakilacustomer.org    |          8 |
+|           5 |        1 | ELIZABETH  | BROWN     | 53 Idfu Parkway                    | ELIZABETH.BROWN@sakilacustomer.org  |          9 |
+|           6 |        2 | JENNIFER   | DAVIS     | 1795 Santiago de Compostela Way    | JENNIFER.DAVIS@sakilacustomer.org   |         10 |
+|           7 |        1 | MARIA      | MILLER    | 900 Santiago de Compostela Parkway | MARIA.MILLER@sakilacustomer.org     |         11 |
+|           8 |        2 | SUSAN      | WILSON    | 478 Joliet Way                     | SUSAN.WILSON@sakilacustomer.org     |         12 |
+|           9 |        2 | MARGARET   | MOORE     | 613 Korolev Drive                  | MARGARET.MOORE@sakilacustomer.org   |         13 |
+|          10 |        1 | DOROTHY    | TAYLOR    | 1531 Sal Drive                     | DOROTHY.TAYLOR@sakilacustomer.org   |         14 |
+|          11 |        2 | LISA       | ANDERSON  | 1542 Tarlac Parkway                | LISA.ANDERSON@sakilacustomer.org    |         15 |
+|          12 |        1 | NANCY      | THOMAS    | 808 Bhopal Manor                   | NANCY.THOMAS@sakilacustomer.org     |         16 |
+|          13 |        2 | KAREN      | JACKSON   | 270 Amroha Parkway                 | KAREN.JACKSON@sakilacustomer.org    |         17 |
+|          14 |        2 | BETTY      | WHITE     | 770 Bydgoszcz Avenue               | BETTY.WHITE@sakilacustomer.org      |         18 |
+|          15 |        1 | HELEN      | HARRIS    | 419 Iligan Lane                    | HELEN.HARRIS@sakilacustomer.org     |         19 |
+|          16 |        2 | SANDRA     | MARTIN    | 360 Toulouse Parkway               | SANDRA.MARTIN@sakilacustomer.org    |         20 |
+|          17 |        1 | DONNA      | THOMPSON  | 270 Toulon Boulevard               | DONNA.THOMPSON@sakilacustomer.org   |         21 |
+|          18 |        2 | CAROL      | GARCIA    | 320 Brest Avenue                   | CAROL.GARCIA@sakilacustomer.org     |         22 |
+|          19 |        1 | RUTH       | MARTINEZ  | 1417 Lancaster Avenue              | RUTH.MARTINEZ@sakilacustomer.org    |         23 |
+|          20 |        2 | SHARON     | ROBINSON  | 1688 Okara Way                     | SHARON.ROBINSON@sakilacustomer.org  |         24 |
++-------------+----------+------------+-----------+------------------------------------+-------------------------------------+------------+
+20 rows in set (0.00 sec)
+	
+
+	Subquery in delete: If you want to delete records in a table based on values that are stored in other database tables,
+	
+		Example:  Delete records of payments before the datetime "2005-05-25 00:00:40" 
+			
+			DELETE payment_copy_alias
+			FROM payment_copy AS payment_copy_alias
+			RIGHT JOIN 
+				(
+				SELECT rental.rental_date 
+				FROM rental
+				Where rental_date < "2005-05-25 00:00:40" 
+				) AS rental_alias
+				ON payment_copy_alias.payment_date = rental_alias.rental_date;
+	
+					Result
+					
+					select payment_date, amount 
+					from payment_copy
+					order by payment_date
+					limit 20;	
+					
+						Before:
+
+						+---------------------+--------+
+						|payment_date         | amount |
+						+---------------------+--------+
+						| 2005-05-24 22:53:30 |   2.99 |
+						| 2005-05-24 22:54:33 |   2.99 |
+						| 2005-05-24 23:03:39 |   3.99 |
+						| 2005-05-24 23:04:41 |   4.99 |
+						| 2005-05-24 23:05:21 |   6.99 |
+						| 2005-05-24 23:08:07 |   0.99 |
+						| 2005-05-24 23:11:53 |   1.99 |
+						| 2005-05-24 23:31:46 |   4.99 |
+						| 2005-05-25 00:00:40 |   4.99 |
+						| 2005-05-25 00:02:21 |   5.99 |
+						| 2005-05-25 00:09:02 |   8.99 |
+						| 2005-05-25 00:19:27 |   4.99 |
+						| 2005-05-25 00:22:55 |   6.99 |
+						| 2005-05-25 00:31:15 |   0.99 |
+						| 2005-05-25 00:39:22 |   9.99 |
+						| 2005-05-25 00:43:11 |   4.99 |
+						| 2005-05-25 01:06:36 |   2.99 |
+						| 2005-05-25 01:10:47 |   0.99 |
+						| 2005-05-25 01:17:24 |   4.99 |
+						| 2005-05-25 01:48:41 |   2.99 |
+						+---------------------+--------+
+						20 rows in set (0.02 sec)
+						
+						AFTER
+						
+						+---------------------+--------+
+						|payment_date         | amount |
+						+---------------------+--------+
+						| 2005-05-25 00:00:40 |   4.99 |
+						| 2005-05-25 00:02:21 |   5.99 |
+						| 2005-05-25 00:09:02 |   8.99 |
+						| 2005-05-25 00:19:27 |   4.99 |
+						| 2005-05-25 00:22:55 |   6.99 |
+						| 2005-05-25 00:31:15 |   0.99 |
+						| 2005-05-25 00:39:22 |   9.99 |
+						| 2005-05-25 00:43:11 |   4.99 |
+						| 2005-05-25 01:06:36 |   2.99 |
+						| 2005-05-25 01:10:47 |   0.99 |
+						| 2005-05-25 01:17:24 |   4.99 |
+						| 2005-05-25 01:48:41 |   2.99 |
+						+---------------------+--------+
+						20 rows in set (0.03 sec)
+					
+					
+	Subquery in update: If you want to update records in a table based on values that are stored in other database tables, 
+			
+		Example:  Change payment amount to 0 for rental returns after a certain date cutoff, due to some faulty accounting or something
+
+			UPDATE payment_copy
+			right join
+					(
+					SELECT rental.rental_date 
+					FROM rental
+					Where rental_date >= '2005-05-24 23:11:53' AND rental_date <= '2005-05-25 00:02:21'
+					) AS TEMP on TEMP.rental_date =  payment_copy.payment_date
+			SET amount = 0;
+							
+					Result:
+					
+					select payment_date, amount 
+					from payment_copy
+					order by payment_date
+					limit 20;	
+					
+						Before:
+
+						+---------------------+--------+
+						|payment_date         | amount |
+						+---------------------+--------+
+						| 2005-05-24 22:53:30 |   2.99 |
+						| 2005-05-24 22:54:33 |   2.99 |
+						| 2005-05-24 23:03:39 |   3.99 |
+						| 2005-05-24 23:04:41 |   4.99 |
+						| 2005-05-24 23:05:21 |   6.99 |
+						| 2005-05-24 23:08:07 |   0.99 |
+						| 2005-05-24 23:11:53 |   1.99 |
+						| 2005-05-24 23:31:46 |   4.99 |
+						| 2005-05-25 00:00:40 |   4.99 |
+						| 2005-05-25 00:02:21 |   5.99 |
+						| 2005-05-25 00:09:02 |   8.99 |
+						| 2005-05-25 00:19:27 |   4.99 |
+						| 2005-05-25 00:22:55 |   6.99 |
+						| 2005-05-25 00:31:15 |   0.99 |
+						| 2005-05-25 00:39:22 |   9.99 |
+						| 2005-05-25 00:43:11 |   4.99 |
+						| 2005-05-25 01:06:36 |   2.99 |
+						| 2005-05-25 01:10:47 |   0.99 |
+						| 2005-05-25 01:17:24 |   4.99 |
+						| 2005-05-25 01:48:41 |   2.99 |
+						+---------------------+--------+
+						20 rows in set (0.02 sec)
+
+						After:
+						
+						+---------------------+--------+
+						|payment_date         | amount |
+						+---------------------+--------+
+						| 2005-05-24 22:53:30 |   2.99 |
+						| 2005-05-24 22:54:33 |   2.99 |
+						| 2005-05-24 23:03:39 |   3.99 |
+						| 2005-05-24 23:04:41 |   4.99 |
+						| 2005-05-24 23:05:21 |   6.99 |
+						| 2005-05-24 23:08:07 |   0.99 |
+						| 2005-05-24 23:11:53 |   0.00 |
+						| 2005-05-24 23:31:46 |   0.00 |
+						| 2005-05-25 00:00:40 |   0.00 |
+						| 2005-05-25 00:02:21 |   0.00 |
+						| 2005-05-25 00:09:02 |   8.99 |
+						| 2005-05-25 00:19:27 |   4.99 |
+						| 2005-05-25 00:22:55 |   6.99 |
+						| 2005-05-25 00:31:15 |   0.99 |
+						| 2005-05-25 00:39:22 |   9.99 |
+						| 2005-05-25 00:43:11 |   4.99 |
+						| 2005-05-25 01:06:36 |   2.99 |
+						| 2005-05-25 01:10:47 |   0.99 |
+						| 2005-05-25 01:17:24 |   4.99 |
+						| 2005-05-25 01:48:41 |   2.99 |
+						+---------------------+--------+
+						20 rows in set (0.02 sec)
+						
+					
+================================================================================================================					
+	http://stackoverflow.com/questions/11588710/mysql-update-query-with-sub-query
+	http://stackoverflow.com/questions/8527569/mysql-delete-with-subquery
+	* note for UPDATE/DELETE 
+==============================================================================================================================
+		
+	*using equal signs, the subqueries cannot return multiple items
+	*Subqueries suck at performance, better to use joins
+	
+	Keywords Definitions:	https://dev.mysql.com/doc/refman/5.7/en/any-in-some-subqueries.html
+	
+		ANY,	ANY keyword, which must follow a comparison operator, 
+				means “return TRUE if the comparison is TRUE for ANY of the values in the column that the subquery returns.”
+				* FALSE if selection s1 from T2 is empty. 
+				* NULL if T2 has NULL.
+				
+				
+				SELECT s1 FROM t1 WHERE s1 > ANY (SELECT s1 FROM t2);
+					
+		SOME,	The word SOME is an alias for ANY. Thus, these two statements are the same.
+		 	
+		IN,		IN is an alias for = ANY.
+				IN and = ANY are not synonyms when used with an expression list. 
+					IN can take an expression list, but = ANY cannot. 
+				NULL within IN, returns FALSE	
+				
+				NOT IN is an alias for <> ALL.
+		
+		ALL,	ALL, which must follow a comparison operator, 
+				means “return TRUE if the comparison is TRUE for ALL of the values in the column that the subquery returns.
+				* TRUE if selection s1 from T2 is empty. 
+				* NULL if T2 has NULL.
+				
+				SELECT s1 FROM t1 WHERE s1 > ALL (SELECT s1 FROM t2);
+		
+		EXISTS,  returns TRUE whenever the subquery returns one or more values.
+				 NULL within EXIST, returns TRUE
+		
+		NOT EXISTS, returns TRUE if zero rows are returned.
+		
+		
+		https://en.wikipedia.org/wiki/Correlated_subquery
+		
+		Correlated subqueries,  is a subquery that uses values from the outer query. 
+		Because the subquery is evaluated once for each row processed by the outer query, it can be inefficient.
+	
+		Fix:  Use join
+		
+		(bad)
+		SELECT
+		employee_number,name,
+			(SELECT AVG(salary) 
+			FROM employees
+			WHERE department = Bob.department) AS department_average
+		FROM employees AS Bob;
+
+
+		-- This subquery is not correlated with the outer query, and is therefore
+		-- executed only once, regardless of the number of employees.
+		(good)
+		SELECT employees.employee_number, employees.name
+		FROM employees INNER JOIN
+			(SELECT department, AVG(salary) AS department_average
+			FROM employees
+			GROUP BY department) AS temp ON employees.department = temp.department
+			WHERE employees.salary > temp.department_average;
+
+	
+	
+
+	
